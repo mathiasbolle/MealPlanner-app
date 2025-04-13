@@ -1,6 +1,7 @@
 package be.mbolle.mealplanner
 
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -37,7 +38,9 @@ import androidx.compose.ui.unit.sp
 import be.mbolle.mealplanner.data.meals
 import be.mbolle.mealplanner.ui.theme.MealPlannerTheme
 import be.mbolle.mealplanner.util.getAbbrDay
+import java.time.DayOfWeek
 import java.time.LocalDate
+import java.time.temporal.WeekFields
 
 
 @Composable
@@ -59,25 +62,37 @@ fun MealPlannerApp(modifier: Modifier = Modifier) {
 
 @Composable
 fun Menu(modifier: Modifier = Modifier) {
-    val menuOfToday = meals.first { meal -> meal.date == LocalDate.of(2025, 3, 17) }
-    val theOtherMenus = meals.minus(menuOfToday)
+    val weekField = WeekFields.of(DayOfWeek.MONDAY, 7)
+    val tempWeekBasedOfYear = weekField.weekOfWeekBasedYear()
 
-    Box(modifier = Modifier.padding(top = 10.dp, bottom = 28.dp)) {
-        Menuitem(
-            meal = menuOfToday,
-            onMealAction = {},
-            modifier = modifier.padding(vertical = 10.dp)
-        )
-    }
-
+    val groupedByWeek = meals.groupBy { meal -> meal.date.get(tempWeekBasedOfYear) }.values
+    Log.d("MealPlannerApp", groupedByWeek.toString())
 
     LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        items(theOtherMenus) { meal ->
-            Menuitem(
-                meal = meal,
-                onMealAction = {},
-                modifier = modifier.padding(vertical = 10.dp)
-            )
+        groupedByWeek.forEach { mealsPerWeek ->
+            Log.d("MealPlannerApp", mealsPerWeek.toString())
+            items(mealsPerWeek) { meal ->
+                if (meal.date == LocalDate.of(2025, 3, 17)) {
+                    Box(modifier = Modifier.padding(bottom = 22.dp)) {
+                        Menuitem(
+                            meal = meal,
+                            onMealAction = {},
+                            modifier = modifier.padding(vertical = 10.dp)
+                        )
+                    }
+                } else {
+                    Menuitem(
+                        meal = meal,
+                        onMealAction = {},
+                        modifier = modifier.padding(vertical = 10.dp)
+                    )
+
+                    if (meal == mealsPerWeek.last()) {
+                        // if this is the last meal of the week.
+                        Spacer(modifier = Modifier.padding(vertical = 50.dp))
+                    }
+                }
+            }
         }
     }
 }
@@ -151,6 +166,12 @@ fun Menuitem(
         )
     ) MaterialTheme.colorScheme.tertiaryContainer else MaterialTheme.colorScheme.primaryContainer
 
+    val fontWeight = if (meal.date == LocalDate.of(
+            2025,
+            3,
+            17
+    )) FontWeight.Bold else FontWeight.Normal
+
     Row(
         modifier = Modifier
             .background(
@@ -173,13 +194,13 @@ fun Menuitem(
 
         Column(
             modifier = Modifier
-                .weight(0.90f)
+                .weight(0.85f)
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.Center
         ) {
             Text(
                 meal.meal,
-                fontWeight = FontWeight.Bold,
+                fontWeight = fontWeight,
                 fontSize = 18.sp,
                 textAlign = TextAlign.Start
             )
@@ -187,12 +208,11 @@ fun Menuitem(
 
         Column(
             modifier = Modifier
-                .weight(0.10f)
+                .weight(0.15f)
                 .fillMaxHeight(),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            //TODO add icon
             Icon(painter = painterResource(R.drawable.more_horiz), contentDescription = "more")
         }
     }
