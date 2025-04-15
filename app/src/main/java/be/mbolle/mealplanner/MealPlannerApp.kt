@@ -20,11 +20,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,9 +38,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import be.mbolle.mealplanner.data.meals
 import be.mbolle.mealplanner.ui.theme.MealPlannerTheme
 import be.mbolle.mealplanner.util.getAbbrDay
+import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.WeekFields
@@ -45,54 +50,80 @@ import java.time.temporal.WeekFields
 
 @Composable
 fun MealPlannerApp(modifier: Modifier = Modifier) {
+    val viewModel: MealPlannerViewModel = viewModel()
+    val state = viewModel.mealPlannerState.value
+
     Column(modifier = modifier) {
         TimeframeButtons(
             modifier = Modifier.fillMaxWidth(),
-            onClickCurrentWeek = {},
-            onClickNextWeek = {},
-            onClickNextMonth = {}
+            onClickCurrentWeek = {
+                viewModel.scrollToCurrentWeek()
+            },
+            onClickNextWeek = {
+                viewModel.scrollToNextWeek()
+            },
+            onClickNextMonth = {
+                viewModel.scrollToNextMonth()
+            }
         )
         Text(
-            "Menu 17/03 - 23/03", modifier = Modifier.padding(top= 30.dp, bottom = 10.dp),
+            "Menu 17/03 - 23/03", modifier = Modifier.padding(top = 30.dp, bottom = 10.dp),
             fontSize = 25.sp, textAlign = TextAlign.Left, fontWeight = FontWeight.Light
         )
-        Menu()
+        Menu(mealsState = state.mealsState,
+            scrollIndex = state.scrollIndex)
     }
 }
 
 @Composable
-fun Menu(modifier: Modifier = Modifier) {
-    val weekField = WeekFields.of(DayOfWeek.MONDAY, 7)
-    val tempWeekBasedOfYear = weekField.weekOfWeekBasedYear()
+fun Menu(modifier: Modifier = Modifier, mealsState: MealsState, scrollIndex: Int) {
 
-    val groupedByWeek = meals.groupBy { meal -> meal.date.get(tempWeekBasedOfYear) }.values
-    Log.d("MealPlannerApp", groupedByWeek.toString())
+    when (mealsState) {
+        is MealsState.Succeed -> {
+            val lazyListState = rememberLazyListState()
+            val coroutineScope = rememberCoroutineScope()
 
-    LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        groupedByWeek.forEach { mealsPerWeek ->
-            Log.d("MealPlannerApp", mealsPerWeek.toString())
-            items(mealsPerWeek) { meal ->
-                if (meal.date == LocalDate.of(2025, 3, 17)) {
-                    Box(modifier = Modifier.padding(bottom = 22.dp)) {
-                        Menuitem(
-                            meal = meal,
-                            onMealAction = {},
-                            modifier = modifier.padding(vertical = 10.dp)
-                        )
-                    }
-                } else {
-                    Menuitem(
-                        meal = meal,
-                        onMealAction = {},
-                        modifier = modifier.padding(vertical = 10.dp)
+            LaunchedEffect(key1 = scrollIndex) {
+                coroutineScope.launch {
+                    lazyListState.scrollToItem(
+                        index = scrollIndex
                     )
+                }
+            }
 
-                    if (meal == mealsPerWeek.last()) {
-                        // if this is the last meal of the week.
-                        Spacer(modifier = Modifier.padding(vertical = 50.dp))
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), state = lazyListState) {
+                mealsState.list.forEach { mealsPerWeek ->
+                    Log.d("MealPlannerApp", mealsPerWeek.toString())
+                    items(mealsPerWeek) { meal ->
+                        if (meal.date == LocalDate.of(2025, 3, 17)) {
+                            Box(modifier = Modifier.padding(bottom = 22.dp)) {
+                                Menuitem(
+                                    meal = meal,
+                                    onMealAction = {},
+                                    modifier = modifier.padding(vertical = 10.dp)
+                                )
+                            }
+                        } else {
+                            Menuitem(
+                                meal = meal,
+                                onMealAction = {},
+                                modifier = modifier.padding(vertical = 10.dp)
+                            )
+
+                            if (meal == mealsPerWeek.last()) {
+                                // if this is the last meal of the week.
+                                Spacer(modifier = Modifier.padding(vertical = 50.dp))
+                            }
+                        }
                     }
                 }
             }
+        }
+        is MealsState.Loading -> {
+
+        }
+        is MealsState.Error -> {
+
         }
     }
 }
@@ -170,7 +201,8 @@ fun Menuitem(
             2025,
             3,
             17
-    )) FontWeight.Bold else FontWeight.Normal
+        )
+    ) FontWeight.Bold else FontWeight.Normal
 
     Row(
         modifier = Modifier
