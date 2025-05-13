@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner
+package be.mbolle.mealplanner.ui
 
 
 import android.util.Log
@@ -39,19 +39,19 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import be.mbolle.mealplanner.Meal
+import be.mbolle.mealplanner.R
 import be.mbolle.mealplanner.data.meals
 import be.mbolle.mealplanner.ui.theme.MealPlannerTheme
 import be.mbolle.mealplanner.util.getAbbrDay
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.temporal.WeekFields
 
 
 @Composable
 fun MealPlannerApp(modifier: Modifier = Modifier) {
-    val viewModel: MealPlannerViewModel = viewModel()
-    val state = viewModel.mealPlannerState.value
+    val viewModel: MealPlannerViewModel = viewModel(factory = MealPlannerViewModel.Factory)
+    val state = viewModel.mealPlannerState
 
     Column(modifier = modifier) {
         TimeframeButtons(
@@ -70,16 +70,16 @@ fun MealPlannerApp(modifier: Modifier = Modifier) {
             "Menu 17/03 - 23/03", modifier = Modifier.padding(top = 30.dp, bottom = 10.dp),
             fontSize = 25.sp, textAlign = TextAlign.Left, fontWeight = FontWeight.Light
         )
-        Menu(mealsState = state.mealsState,
+        if (state is MealsState.Succeed)
+        Menu(mealsState = state.list,
             scrollIndex = state.scrollIndex)
     }
 }
 
 @Composable
-fun Menu(modifier: Modifier = Modifier, mealsState: MealsState, scrollIndex: Int) {
-
+fun Menu(modifier: Modifier = Modifier, mealsState: Collection<List<Meal>>, scrollIndex: Int) {
     when (mealsState) {
-        is MealsState.Succeed -> {
+        else -> {
             val lazyListState = rememberLazyListState()
             val coroutineScope = rememberCoroutineScope()
 
@@ -92,7 +92,7 @@ fun Menu(modifier: Modifier = Modifier, mealsState: MealsState, scrollIndex: Int
             }
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), state = lazyListState) {
-                mealsState.list.forEach { mealsPerWeek ->
+                mealsState.forEach { mealsPerWeek ->
                     Log.d("MealPlannerApp", mealsPerWeek.toString())
                     items(mealsPerWeek) { meal ->
                         if (meal.date == LocalDate.of(2025, 3, 17)) {
@@ -118,12 +118,6 @@ fun Menu(modifier: Modifier = Modifier, mealsState: MealsState, scrollIndex: Int
                     }
                 }
             }
-        }
-        is MealsState.Loading -> {
-
-        }
-        is MealsState.Error -> {
-
         }
     }
 }
