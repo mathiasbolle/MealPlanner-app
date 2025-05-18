@@ -1,15 +1,14 @@
 package be.mbolle.mealplanner.ui
 
-import be.mbolle.mealplanner.Meal
+import be.mbolle.mealplanner.model.Meal
 
 data class MealPlannerState(
-    val mealsState: MealsState,
+    val mealDetails: MealStatus = MealStatus.Loading,
     val scrollIndex: Int = 0
 )
 
-
-sealed class MealsState {
-    data class Succeed(val list: Collection<List<Meal>>, val scrollIndex: Int = 0): MealsState()
-    data class Error(val message: String): MealsState()
-    object Loading: MealsState()
+sealed interface MealStatus {
+    data class Succeed(val list: Collection<List<Meal>>, val scrollIndex: Int = 0): MealStatus
+    data class Error(val message: String): MealStatus
+    object Loading: MealStatus
 }

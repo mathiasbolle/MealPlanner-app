@@ -1,6 +1,6 @@
 package be.mbolle.mealplanner.data
 
-import be.mbolle.mealplanner.Meal
+import be.mbolle.mealplanner.model.Meal
 import java.time.LocalDate
 
 private val beginDate = LocalDate.of(2025, 3, 17)

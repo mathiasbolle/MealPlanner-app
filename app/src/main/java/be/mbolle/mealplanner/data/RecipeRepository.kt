@@ -1,6 +1,6 @@
 package be.mbolle.mealplanner.data
 
-import be.mbolle.mealplanner.Meal
+import be.mbolle.mealplanner.model.Meal
 
 interface RecipeRepository {
     suspend fun getMenu(): List<be.mbolle.mealplanner.data.entities.Menu>
