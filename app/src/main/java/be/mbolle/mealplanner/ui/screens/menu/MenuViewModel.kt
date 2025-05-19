@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.ui
+package be.mbolle.mealplanner.ui.screens.menu
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -20,9 +20,9 @@ import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.temporal.WeekFields
 
-class MealPlannerViewModel(val recipeRepository: RecipeRepository) : ViewModel() {
-    var mealPlannerState by mutableStateOf(
-        MealPlannerState()
+class MenuViewModel(val recipeRepository: RecipeRepository) : ViewModel() {
+    var menuState by mutableStateOf(
+        MenuState()
     )
         private set
 
@@ -31,23 +31,23 @@ class MealPlannerViewModel(val recipeRepository: RecipeRepository) : ViewModel()
             try {
                 val result = recipeRepository.getMenu().toMealModel()
                 return@async MealStatus.Succeed(list = mealsByWeek(result))
-            }catch (e: Exception) {
+            } catch (e: Exception) {
                 return@async MealStatus.Error(e.toString())
             }
         }
     }
 
-    fun getMealPlanner() {
+    fun getMenu() {
         viewModelScope.launch {
             Log.d("MealPlannerViewModel", getInitMealDetails().await().toString())
-            mealPlannerState = mealPlannerState.copy(
+            menuState = menuState.copy(
                 mealDetails = getInitMealDetails().await()
             )
         }
     }
 
     init {
-        getMealPlanner()
+        getMenu()
     }
 
     private fun mealsByWeek(meals: List<Meal>): Collection<List<Meal>> {
@@ -57,17 +57,37 @@ class MealPlannerViewModel(val recipeRepository: RecipeRepository) : ViewModel()
         return meals.groupBy { meal -> meal.date.get(tempWeekBasedOfYear) }.values
     }
 
+    private fun markAsActive(text: String) {
 
-    fun scrollToNextWeek() {
-        mealPlannerState.copy(scrollIndex = 7)
+        (menuState.mealDetails as? MealStatus.Succeed)?.let { mealDetails ->
+            val activeScroll = mealDetails.activeScroll.toMutableMap()
+            activeScroll.forEach { k, v -> activeScroll[k] = false }
+            activeScroll[text] = true
+
+            menuState = menuState.copy(
+                mealDetails = mealDetails.copy(
+                    activeScroll = activeScroll.toMap()
+                )
+            )
+        }
     }
 
-    fun scrollToCurrentWeek() {
-        mealPlannerState.copy(scrollIndex = 0)
+    fun scrollToCurrentWeek(text: String) {
+        menuState.copy(scrollIndex = 0)
+        markAsActive(text)
+
     }
 
-    fun scrollToNextMonth() {
-        mealPlannerState.copy(scrollIndex = 0)
+    fun scrollToNextWeek(text: String) {
+        menuState.copy(scrollIndex = 7)
+        markAsActive(text)
+
+    }
+
+
+    fun scrollToNextMonth(text: String) {
+        menuState.copy(scrollIndex = 0)
+        markAsActive(text)
     }
 
 
@@ -83,7 +103,7 @@ class MealPlannerViewModel(val recipeRepository: RecipeRepository) : ViewModel()
                 val recipeMenu = Menu(client = ktorHttpClient)
                 val recipeRepository = ApiRecipeRepository(recipeMenu)
 
-                return MealPlannerViewModel(
+                return MenuViewModel(
                     recipeRepository = recipeRepository
                 ) as T
             }

@@ -14,18 +14,23 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import be.mbolle.mealplanner.R
 
 @Composable
 fun DateButtons(
     modifier: Modifier = Modifier,
-    onClickCurrentWeek: () -> Unit,
-    onClickNextWeek: () -> Unit,
-    onClickNextMonth: () -> Unit
+
+    buttons: List<@Composable () -> Unit>
 ) {
     Row(horizontalArrangement = Arrangement.Start, modifier = modifier) {
+        buttons.forEachIndexed { index, value ->
+            value()
+            if (index + 1 < buttons.size) {
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+        }
+
+        /*
         Box(
             modifier = Modifier
                 .background(
@@ -70,5 +75,37 @@ fun DateButtons(
         ) {
             Text(stringResource(R.string.next_month_btn))
         }
+    }
+         */
+
+    }
+}
+
+@Composable
+fun DateButton(
+    isActive: Boolean,
+    text: String,
+    callback: () -> Unit
+) {
+    val dateModifier = if (isActive)
+        Modifier.background(
+            color = MaterialTheme.colorScheme.secondaryContainer,
+            shape = RoundedCornerShape(7.dp)
+        )
+    else
+        Modifier.border(
+            2.dp,
+            color = MaterialTheme.colorScheme.outline,
+            shape = RoundedCornerShape(7.dp)
+        )
+
+    Box(
+        modifier = Modifier
+            .then(dateModifier)
+            .clickable { callback() }
+            .padding(horizontal = 10.dp, vertical = 5.dp)
+
+    ) {
+        Text(text)
     }
 }
