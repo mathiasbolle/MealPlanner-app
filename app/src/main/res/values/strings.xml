@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">MealPlanner</string>
+    <string name="menu_subtitle">Menu week X</string>
+    <string name="this_week_btn">This week</string>
+    <string name="next_week_btn">Next week</string>
+    <string name="next_month_btn">Next Month</string>
+    <string name="more_icon">more</string>
 </resources>

@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DateButtons(
     modifier: Modifier = Modifier,
-
     buttons: List<@Composable () -> Unit>
 ) {
     Row(horizontalArrangement = Arrangement.Start, modifier = modifier) {
