@@ -74,17 +74,19 @@ fun TintedIconButtonSample() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipeAppBar(modifier: Modifier = Modifier, menuState: MealSections) {
+fun RecipeAppBar(modifier: Modifier = Modifier,
+                 menuState: MealSections,
+                 changeSection: (MealSections) -> Unit,
+                 navigateTo: (MealSections) -> Unit) {
     Box(
         modifier
             .background(
                 MaterialTheme.colorScheme.primaryContainer
             )
             .padding(horizontal = 20.dp, vertical = 10.dp)
-        //titleContentColor = MaterialTheme.colorScheme.primary
     ) {
         Row(modifier = modifier) {
-            MenuDestination.entries.forEachIndexed { index, destination ->
+            MealSections.entries.forEachIndexed { index, destination ->
                 val customColor =
                     if (index == menuState.ordinal) MaterialTheme.colorScheme.secondaryContainer else Color.Unspecified
 
@@ -95,7 +97,8 @@ fun RecipeAppBar(modifier: Modifier = Modifier, menuState: MealSections) {
                             color = customColor,
                         )
                         .clickable {
-
+                            changeSection(destination)
+                            navigateTo(destination)
                         },
                     contentAlignment = Alignment.Center,
                     propagateMinConstraints = true,
@@ -110,7 +113,7 @@ fun RecipeAppBar(modifier: Modifier = Modifier, menuState: MealSections) {
 
                     )
                 }
-                if (index + 1 < MenuDestination.entries.size) {
+                if (index + 1 < MealSections.entries.size) {
                     Spacer(modifier = Modifier.width(10.dp))
                 }
             }
@@ -119,13 +122,7 @@ fun RecipeAppBar(modifier: Modifier = Modifier, menuState: MealSections) {
     }
 }
 
-enum class MenuDestination(
-    @DrawableRes val icon: Int,
-    val contentDescription: String,
-) {
-    MENU(R.drawable.menu_book, "Menu overview"),
-    FRIDGE(R.drawable.fridge, "Menu overview"),
-}
+
 
 enum class Destination(
     val route: String,

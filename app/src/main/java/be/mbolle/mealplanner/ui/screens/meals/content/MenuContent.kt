@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.ui.screens.meals
+package be.mbolle.mealplanner.ui.screens.meals.content
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,10 +23,12 @@ import be.mbolle.mealplanner.R
 import be.mbolle.mealplanner.ui.composables.DateButton
 import be.mbolle.mealplanner.ui.composables.DateButtons
 import be.mbolle.mealplanner.ui.composables.menu.Menu
+import be.mbolle.mealplanner.ui.screens.meals.MenuStatus
+import be.mbolle.mealplanner.ui.screens.meals.MenuViewModel
 
 @Composable
 fun MenuContent(modifier: Modifier = Modifier) {
-    val viewModel: MenuViewModel = viewModel(factory = MenuViewModel.Factory)
+    val viewModel: MenuViewModel = viewModel(factory = MenuViewModel.Companion.Factory)
     val state = viewModel.menuState
 
     val thisWeek = stringResource(R.string.this_week_btn)
@@ -35,29 +37,30 @@ fun MenuContent(modifier: Modifier = Modifier) {
 
     Column {
         Column(modifier = modifier) {
+            DateButtons(
+                modifier = Modifier.fillMaxWidth(),
+                buttons = listOf(
+                    {
+                        DateButton(state.activeScroll[thisWeek] == true, thisWeek) {
+                            viewModel.scrollToCurrentWeek(thisWeek)
+                        }
+                    },
+                    {
+                        DateButton(state.activeScroll[nextWeek] == true, nextWeek) {
+                            viewModel.scrollToNextWeek(nextWeek)
+                        }
+                    },
+                    {
+                        DateButton(state.activeScroll[nextMonth] == true, nextMonth) {
+                            viewModel.scrollToNextMonth(nextMonth)
+                        }
+                    },
+                ),
+            )
             when (state.mealDetails) {
                 is MenuStatus.Succeed -> {
                     state.mealDetails.let { details ->
-                        DateButtons(
-                            modifier = Modifier.fillMaxWidth(),
-                            buttons = listOf(
-                                {
-                                    DateButton(details.activeScroll[thisWeek] == true, thisWeek) {
-                                        viewModel.scrollToCurrentWeek(thisWeek)
-                                    }
-                                },
-                                {
-                                    DateButton(details.activeScroll[nextWeek] == true, nextWeek) {
-                                        viewModel.scrollToNextWeek(nextWeek)
-                                    }
-                                },
-                                {
-                                    DateButton(details.activeScroll[nextMonth] == true, nextMonth) {
-                                        viewModel.scrollToNextMonth(nextMonth)
-                                    }
-                                },
-                            ),
-                        )
+
                         Text(
                             stringResource(R.string.menu_subtitle),
                             modifier = Modifier.padding(top = 50.dp, bottom = 10.dp),

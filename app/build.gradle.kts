@@ -78,6 +78,9 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
     implementation("io.ktor:ktor-client-logging-jvm:1.5.0")
 
+    // Jetpack Compose Integration
+    implementation("androidx.navigation:navigation-compose:2.9.0")
+
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

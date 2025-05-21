@@ -59,17 +59,13 @@ class MenuViewModel(private val recipeRepository: RecipeRepository) : ViewModel(
 
     private fun markAsActive(text: String) {
 
-        (menuState.mealDetails as? MenuStatus.Succeed)?.let { mealDetails ->
-            val activeScroll = mealDetails.activeScroll.toMutableMap()
-            activeScroll.forEach { k, v -> activeScroll[k] = false }
-            activeScroll[text] = true
+        val activeScroll = menuState.activeScroll.toMutableMap()
+        activeScroll.forEach { k, v -> activeScroll[k] = false }
+        activeScroll[text] = true
 
-            menuState = menuState.copy(
-                mealDetails = mealDetails.copy(
-                    activeScroll = activeScroll.toMap()
-                )
-            )
-        }
+        menuState = menuState.copy(
+            activeScroll = activeScroll.toMap()
+        )
     }
 
     fun scrollToCurrentWeek(text: String) {
