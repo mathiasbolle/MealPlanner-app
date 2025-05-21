@@ -4,11 +4,9 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -25,13 +23,9 @@ import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,7 +39,8 @@ import androidx.compose.ui.unit.dp
 import be.mbolle.mealplanner.R
 import be.mbolle.mealplanner.data.meals
 import be.mbolle.mealplanner.ui.composables.DateIcon
-import be.mbolle.mealplanner.ui.screens.menu.MenuContent
+import be.mbolle.mealplanner.ui.screens.meals.MealSections
+import be.mbolle.mealplanner.ui.screens.meals.MealsScreen
 import be.mbolle.mealplanner.ui.theme.MealPlannerTheme
 
 @Composable
@@ -61,17 +56,7 @@ fun MealPlannerApp(modifier: Modifier = Modifier) {
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = { RecipeBottomBar() }
     ) { innerPadding ->
-        Column() {
-            RecipeAppBar(
-                modifier = modifier
-                    .fillMaxWidth()
-            )
-            MenuContent(
-                modifier = Modifier
-                    .padding(innerPadding)
-                    .padding(start = 20.dp, end = 20.dp, top = 20.dp)
-            )
-        }
+        MealsScreen(innerPadding = innerPadding)
     }
 }
 
@@ -89,21 +74,20 @@ fun TintedIconButtonSample() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipeAppBar(modifier: Modifier = Modifier) {
-    var active by remember { mutableStateOf(true) }
-
-    val customColor =
-        if (active) MaterialTheme.colorScheme.secondaryContainer else Color.Unspecified
-
+fun RecipeAppBar(modifier: Modifier = Modifier, menuState: MealSections) {
     Box(
         modifier
-            .background(MaterialTheme.colorScheme.primaryContainer
+            .background(
+                MaterialTheme.colorScheme.primaryContainer
             )
             .padding(horizontal = 20.dp, vertical = 10.dp)
-            //titleContentColor = MaterialTheme.colorScheme.primary
-        ) {
+        //titleContentColor = MaterialTheme.colorScheme.primary
+    ) {
         Row(modifier = modifier) {
             MenuDestination.entries.forEachIndexed { index, destination ->
+                val customColor =
+                    if (index == menuState.ordinal) MaterialTheme.colorScheme.secondaryContainer else Color.Unspecified
+
                 Box(
                     Modifier
                         .clip(RoundedCornerShape(50))
@@ -111,7 +95,7 @@ fun RecipeAppBar(modifier: Modifier = Modifier) {
                             color = customColor,
                         )
                         .clickable {
-                            active = !active
+
                         },
                     contentAlignment = Alignment.Center,
                     propagateMinConstraints = true,

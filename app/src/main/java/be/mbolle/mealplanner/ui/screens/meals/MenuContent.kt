@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.ui.screens.menu
+package be.mbolle.mealplanner.ui.screens.meals
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -36,7 +36,7 @@ fun MenuContent(modifier: Modifier = Modifier) {
     Column {
         Column(modifier = modifier) {
             when (state.mealDetails) {
-                is MealStatus.Succeed -> {
+                is MenuStatus.Succeed -> {
                     state.mealDetails.let { details ->
                         DateButtons(
                             modifier = Modifier.fillMaxWidth(),
@@ -73,8 +73,8 @@ fun MenuContent(modifier: Modifier = Modifier) {
                     }
                 }
 
-                is MealStatus.Error -> TODO()
-                MealStatus.Loading -> {
+                is MenuStatus.Error -> TODO()
+                MenuStatus.Loading -> {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
                         Loading()
                     }
@@ -87,7 +87,7 @@ fun MenuContent(modifier: Modifier = Modifier) {
 @Composable
 @Preview
 fun MenuScreenPreview() {
-    MenuContent()
+    //MenuContent()
 }
 
 

@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.ui.screens.menu
+package be.mbolle.mealplanner.ui.screens.meals
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -20,19 +20,19 @@ import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.temporal.WeekFields
 
-class MenuViewModel(val recipeRepository: RecipeRepository) : ViewModel() {
+class MenuViewModel(private val recipeRepository: RecipeRepository) : ViewModel() {
     var menuState by mutableStateOf(
         MenuState()
     )
         private set
 
-    private fun getInitMealDetails(): Deferred<MealStatus> {
+    private fun getInitMealDetails(): Deferred<MenuStatus> {
         return viewModelScope.async {
             try {
                 val result = recipeRepository.getMenu().toMealModel()
-                return@async MealStatus.Succeed(list = mealsByWeek(result))
+                return@async MenuStatus.Succeed(list = mealsByWeek(result))
             } catch (e: Exception) {
-                return@async MealStatus.Error(e.toString())
+                return@async MenuStatus.Error(e.toString())
             }
         }
     }
@@ -59,7 +59,7 @@ class MenuViewModel(val recipeRepository: RecipeRepository) : ViewModel() {
 
     private fun markAsActive(text: String) {
 
-        (menuState.mealDetails as? MealStatus.Succeed)?.let { mealDetails ->
+        (menuState.mealDetails as? MenuStatus.Succeed)?.let { mealDetails ->
             val activeScroll = mealDetails.activeScroll.toMutableMap()
             activeScroll.forEach { k, v -> activeScroll[k] = false }
             activeScroll[text] = true
