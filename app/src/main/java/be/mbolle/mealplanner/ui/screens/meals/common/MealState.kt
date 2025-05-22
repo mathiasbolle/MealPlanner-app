@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.ui.screens.meals
+package be.mbolle.mealplanner.ui.screens.meals.common
 import be.mbolle.mealplanner.R
 import androidx.annotation.DrawableRes
 

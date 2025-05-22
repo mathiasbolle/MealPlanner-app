@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.data
+package be.mbolle.mealplanner.data.api
 
 import android.util.Log
 import io.ktor.client.HttpClient
@@ -13,13 +13,14 @@ import io.ktor.client.features.observer.ResponseObserver
 import io.ktor.client.request.header
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
+import kotlinx.serialization.json.Json
 
 private const val TIME_OUT = 60_000
 
 val ktorHttpClient = HttpClient(Android) {
 
     install(JsonFeature) {
-        serializer = KotlinxSerializer(kotlinx.serialization.json.Json {
+        serializer = KotlinxSerializer(Json {
             prettyPrint = true
             isLenient = true
             ignoreUnknownKeys = true

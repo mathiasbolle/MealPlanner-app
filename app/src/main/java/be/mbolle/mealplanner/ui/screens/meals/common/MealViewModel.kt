@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.ui.screens.meals
+package be.mbolle.mealplanner.ui.screens.meals.common
 
 import android.util.Log
 import androidx.compose.runtime.getValue

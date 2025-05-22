@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.ui.screens.meals.content
+package be.mbolle.mealplanner.ui.screens.meals.menu
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,8 +23,6 @@ import be.mbolle.mealplanner.R
 import be.mbolle.mealplanner.ui.composables.DateButton
 import be.mbolle.mealplanner.ui.composables.DateButtons
 import be.mbolle.mealplanner.ui.composables.menu.Menu
-import be.mbolle.mealplanner.ui.screens.meals.MenuStatus
-import be.mbolle.mealplanner.ui.screens.meals.MenuViewModel
 
 @Composable
 fun MenuContent(modifier: Modifier = Modifier) {

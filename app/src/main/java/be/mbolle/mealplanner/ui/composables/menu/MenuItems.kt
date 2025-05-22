@@ -33,8 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import be.mbolle.mealplanner.R
-import be.mbolle.mealplanner.data.meals
-import be.mbolle.mealplanner.model.Meal
+import be.mbolle.mealplanner.data.entities.menus
+import be.mbolle.mealplanner.model.Menu
 import be.mbolle.mealplanner.model.isToday
 import be.mbolle.mealplanner.ui.composables.DateIcon
 import be.mbolle.mealplanner.ui.theme.MealPlannerTheme
@@ -43,17 +43,17 @@ import java.time.LocalDate
 
 @Composable
 fun MenuItem(
-    meal: Meal,
+    menu: Menu,
     onMealAction: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val backgroundColor =
-        if (meal.date.isToday()) MaterialTheme.colorScheme.tertiaryContainer
+        if (menu.date.isToday()) MaterialTheme.colorScheme.tertiaryContainer
         else MaterialTheme.colorScheme.primaryContainer
 
     // should be derived from a viewmodel, this is presentation logic
     val fontWeight =
-        if (meal.date.isToday()) FontWeight.Bold
+        if (menu.date.isToday()) FontWeight.Bold
         else FontWeight.Normal
 
     Row(
@@ -71,7 +71,7 @@ fun MenuItem(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             DateIcon(
-                date = meal.date,
+                date = menu.date,
                 modifier = Modifier.padding(5.dp)
             )
         }
@@ -83,7 +83,7 @@ fun MenuItem(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                meal.meal,
+                menu.meal,
                 fontWeight = fontWeight,
                 fontSize = 18.sp,
                 textAlign = TextAlign.Start
@@ -108,7 +108,7 @@ fun MenuItem(
 }
 
 @Composable
-fun Menu(modifier: Modifier = Modifier, mealsState: Collection<List<Meal>>, scrollIndex: Int) {
+fun Menu(modifier: Modifier = Modifier, mealsState: Collection<List<Menu>>, scrollIndex: Int) {
     when (mealsState) {
         else -> {
             val lazyListState = rememberLazyListState()
@@ -129,14 +129,14 @@ fun Menu(modifier: Modifier = Modifier, mealsState: Collection<List<Meal>>, scro
                         if (meal.date == LocalDate.of(2025, 3, 17)) {
                             Box(modifier = Modifier.padding(bottom = 22.dp)) {
                                 MenuItem(
-                                    meal = meal,
+                                    menu = meal,
                                     onMealAction = {},
                                     modifier = modifier.padding(vertical = 10.dp)
                                 )
                             }
                         } else {
                             MenuItem(
-                                meal = meal,
+                                menu = meal,
                                 onMealAction = {},
                                 modifier = modifier.padding(vertical = 10.dp)
                             )
@@ -156,11 +156,11 @@ fun Menu(modifier: Modifier = Modifier, mealsState: Collection<List<Meal>>, scro
 @Preview
 @Composable
 fun MenuItemPreview() {
-    val aMeal = meals.first()
+    val aMeal = menus.first()
 
     MealPlannerTheme {
         MenuItem(
-            meal = aMeal,
+            menu = aMeal,
             onMealAction = {},
             modifier = Modifier
                 .padding(vertical = 10.dp)
@@ -177,9 +177,9 @@ fun MenuItemsPreview() {
         LazyColumn(
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
-            items(meals) { meal ->
+            items(menus) { meal ->
                 MenuItem(
-                    meal = meal,
+                    menu = meal,
                     onMealAction = {},
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(25))

@@ -37,10 +37,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import be.mbolle.mealplanner.R
-import be.mbolle.mealplanner.data.meals
+import be.mbolle.mealplanner.data.entities.menus
 import be.mbolle.mealplanner.ui.composables.DateIcon
-import be.mbolle.mealplanner.ui.screens.meals.MealSections
-import be.mbolle.mealplanner.ui.screens.meals.MealsScreen
+import be.mbolle.mealplanner.ui.screens.meals.common.MealSections
+import be.mbolle.mealplanner.ui.screens.meals.common.MealsScreen
 import be.mbolle.mealplanner.ui.theme.MealPlannerTheme
 
 @Composable
@@ -169,7 +169,7 @@ fun RecipeBottomBar(modifier: Modifier = Modifier) {
 @Preview
 @Composable
 fun CalendarDatePreview() {
-    val aMeal = meals.first()
+    val aMeal = menus.first()
     MealPlannerTheme {
         DateIcon(date = aMeal.date)
     }

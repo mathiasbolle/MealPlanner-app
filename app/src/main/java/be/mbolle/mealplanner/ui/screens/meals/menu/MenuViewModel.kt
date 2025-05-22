@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.ui.screens.meals
+package be.mbolle.mealplanner.ui.screens.meals.menu
 
 import android.util.Log
 import androidx.compose.runtime.getValue
@@ -9,11 +9,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import be.mbolle.mealplanner.data.ApiRecipeRepository
-import be.mbolle.mealplanner.data.Menu
 import be.mbolle.mealplanner.data.RecipeRepository
-import be.mbolle.mealplanner.data.ktorHttpClient
-import be.mbolle.mealplanner.data.toMealModel
-import be.mbolle.mealplanner.model.Meal
+import be.mbolle.mealplanner.data.api.ktorHttpClient
+import be.mbolle.mealplanner.data.toMenuModel
+import be.mbolle.mealplanner.model.Menu
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
@@ -29,7 +28,7 @@ class MenuViewModel(private val recipeRepository: RecipeRepository) : ViewModel(
     private fun getInitMealDetails(): Deferred<MenuStatus> {
         return viewModelScope.async {
             try {
-                val result = recipeRepository.getMenu().toMealModel()
+                val result = recipeRepository.getMenu().toMenuModel()
                 return@async MenuStatus.Succeed(list = mealsByWeek(result))
             } catch (e: Exception) {
                 return@async MenuStatus.Error(e.toString())
@@ -50,11 +49,11 @@ class MenuViewModel(private val recipeRepository: RecipeRepository) : ViewModel(
         getMenu()
     }
 
-    private fun mealsByWeek(meals: List<Meal>): Collection<List<Meal>> {
+    private fun mealsByWeek(menus: List<Menu>): Collection<List<Menu>> {
         val weekField = WeekFields.of(DayOfWeek.MONDAY, 7)
         val tempWeekBasedOfYear = weekField.weekOfWeekBasedYear()
 
-        return meals.groupBy { meal -> meal.date.get(tempWeekBasedOfYear) }.values
+        return menus.groupBy { meal -> meal.date.get(tempWeekBasedOfYear) }.values
     }
 
     private fun markAsActive(text: String) {
@@ -96,7 +95,7 @@ class MenuViewModel(private val recipeRepository: RecipeRepository) : ViewModel(
 
                 //bad practice i know :D
 
-                val recipeMenu = Menu(client = ktorHttpClient)
+                val recipeMenu = be.mbolle.mealplanner.data.api.Menu(client = ktorHttpClient)
                 val recipeRepository = ApiRecipeRepository(recipeMenu)
 
                 return MenuViewModel(

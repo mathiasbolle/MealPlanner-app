@@ -40,10 +40,10 @@ data class Menu(
     @Serializable(with = LocalDateSerializer::class)
     val date: LocalDate,
     @SerialName("mealParts")
-    val meals: List<Meal>
+    val mealMenus: List<MealMenu>
 )
 
 @Serializable
-data class Meal(
+data class MealMenu(
     val name: String
 )

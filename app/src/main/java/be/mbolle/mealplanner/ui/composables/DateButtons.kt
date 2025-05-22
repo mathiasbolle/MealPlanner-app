@@ -14,6 +14,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -82,27 +83,37 @@ fun DateButtons(
 
 @Composable
 fun DateButton(
-    isActive: Boolean,
+    isActive: Boolean = true,
     text: String,
+    isDisabled: Boolean = false,
+    modifier: Modifier = Modifier,
     callback: () -> Unit
 ) {
-    val dateModifier = if (isActive)
-        Modifier.background(
-            color = MaterialTheme.colorScheme.secondaryContainer,
-            shape = RoundedCornerShape(7.dp)
-        )
-    else
-        Modifier.border(
-            2.dp,
-            color = MaterialTheme.colorScheme.outline,
-            shape = RoundedCornerShape(7.dp)
-        )
+    val dateModifier =
+        if (isDisabled)
+            Modifier.border(
+                2.dp,
+                color = Color(0XFFc8c8c8),
+                shape = RoundedCornerShape(7.dp)
+            )
+        else if (isActive)
+            Modifier.background(
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                shape = RoundedCornerShape(7.dp)
+            )
+        else
+            Modifier.border(
+                2.dp,
+                color = MaterialTheme.colorScheme.outline,
+                shape = RoundedCornerShape(7.dp)
+            )
 
     Box(
         modifier = Modifier
             .then(dateModifier)
             .clickable { callback() }
             .padding(horizontal = 10.dp, vertical = 5.dp)
+            .then(modifier)
 
     ) {
         Text(text)

@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.ui.screens.meals
+package be.mbolle.mealplanner.ui.screens.meals.common
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
@@ -17,8 +17,8 @@ import androidx.navigation.compose.rememberNavController
 import be.mbolle.mealplanner.ui.RecipeAppBar
 import be.mbolle.mealplanner.ui.nav.Meal
 import be.mbolle.mealplanner.ui.nav.Menu
-import be.mbolle.mealplanner.ui.screens.meals.content.MealContent
-import be.mbolle.mealplanner.ui.screens.meals.content.MenuContent
+import be.mbolle.mealplanner.ui.screens.meals.recipe.MealContent
+import be.mbolle.mealplanner.ui.screens.meals.menu.MenuContent
 
 @Composable
 fun MealsScreen(modifier: Modifier = Modifier, innerPadding: PaddingValues) {

@@ -1,6 +1,6 @@
-package be.mbolle.mealplanner.ui.screens.meals
+package be.mbolle.mealplanner.ui.screens.meals.menu
 
-import be.mbolle.mealplanner.model.Meal
+import be.mbolle.mealplanner.model.Menu
 
 data class MenuState(
     val mealDetails: MenuStatus = MenuStatus.Loading,
@@ -10,7 +10,7 @@ data class MenuState(
 
 sealed interface MenuStatus {
     data class Succeed(
-        val list: Collection<List<Meal>>,
+        val list: Collection<List<Menu>>,
         val scrollIndex: Int = 0,
     ) : MenuStatus
     data class Error(val message: String) : MenuStatus

@@ -1,20 +1,21 @@
 package be.mbolle.mealplanner.data
 
-import be.mbolle.mealplanner.model.Meal
+import be.mbolle.mealplanner.data.api.MenuService
+import be.mbolle.mealplanner.model.Menu
 
 interface RecipeRepository {
     suspend fun getMenu(): List<be.mbolle.mealplanner.data.entities.Menu>
 }
 
-class ApiRecipeRepository(val recipeApiMenu: Menu): RecipeRepository {
+class ApiRecipeRepository(val recipeApiMenu: MenuService): RecipeRepository {
     override suspend fun getMenu(): List<be.mbolle.mealplanner.data.entities.Menu> {
         return recipeApiMenu.getMenu()
     }
 }
 
-fun List<be.mbolle.mealplanner.data.entities.Menu>.toMealModel(): List<Meal> {
+fun List<be.mbolle.mealplanner.data.entities.Menu>.toMenuModel(): List<Menu> {
     return this.map { meal ->
-        val mealString = meal.meals.joinToString { meal -> meal.name }
-        return@map Meal(meal = mealString, date = meal.date)
+        val mealString = meal.mealMenus.joinToString { meal -> meal.name }
+        return@map Menu(meal = mealString, date = meal.date)
     }
 }
