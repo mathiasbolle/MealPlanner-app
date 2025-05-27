@@ -14,5 +14,5 @@ interface MenuService {
 }
 
 class Menu(private val client: HttpClient): RecipeApi(client), MenuService {
-    override suspend fun getMenu(): List<Menu> = client.get("${ENDPOINT}/menu")
+    override suspend fun getMenu(): List<Menu> = client.get("${ENDPOINT}menu")
 }

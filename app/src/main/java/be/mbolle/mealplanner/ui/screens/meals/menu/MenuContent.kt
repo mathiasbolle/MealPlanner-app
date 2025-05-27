@@ -20,9 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import be.mbolle.mealplanner.R
-import be.mbolle.mealplanner.ui.composables.DateButton
+import be.mbolle.mealplanner.ui.composables.MealPlannerButton
 import be.mbolle.mealplanner.ui.composables.DateButtons
-import be.mbolle.mealplanner.ui.composables.menu.Menu
+import be.mbolle.mealplanner.ui.composables.menu.MenuList
 
 @Composable
 fun MenuContent(modifier: Modifier = Modifier) {
@@ -39,17 +39,17 @@ fun MenuContent(modifier: Modifier = Modifier) {
                 modifier = Modifier.fillMaxWidth(),
                 buttons = listOf(
                     {
-                        DateButton(state.activeScroll[thisWeek] == true, thisWeek) {
+                        MealPlannerButton(state.activeScroll[thisWeek] == true, thisWeek) {
                             viewModel.scrollToCurrentWeek(thisWeek)
                         }
                     },
                     {
-                        DateButton(state.activeScroll[nextWeek] == true, nextWeek) {
+                        MealPlannerButton(state.activeScroll[nextWeek] == true, nextWeek) {
                             viewModel.scrollToNextWeek(nextWeek)
                         }
                     },
                     {
-                        DateButton(state.activeScroll[nextMonth] == true, nextMonth) {
+                        MealPlannerButton(state.activeScroll[nextMonth] == true, nextMonth) {
                             viewModel.scrollToNextMonth(nextMonth)
                         }
                     },
@@ -67,14 +67,16 @@ fun MenuContent(modifier: Modifier = Modifier) {
                             fontWeight = FontWeight.Light
                         )
 
-                        Menu(
+                        MenuList(
                             mealsState = details.list,
                             scrollIndex = details.scrollIndex
                         )
                     }
                 }
 
-                is MenuStatus.Error -> TODO()
+                is MenuStatus.Error -> {
+
+                }
                 MenuStatus.Loading -> {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
                         Loading()

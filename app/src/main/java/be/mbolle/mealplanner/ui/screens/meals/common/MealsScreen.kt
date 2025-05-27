@@ -95,7 +95,7 @@ fun MealsNavHost(
                 MealContent(
                     modifier = Modifier
                         .padding(innerPadding)
-                        .padding(start = 20.dp, end = 20.dp, top = 20.dp),
+                        .padding(20.dp),
                 )
             }
             BackHandler(true) { }

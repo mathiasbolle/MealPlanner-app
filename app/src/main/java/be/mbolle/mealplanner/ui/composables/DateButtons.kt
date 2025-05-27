@@ -82,7 +82,7 @@ fun DateButtons(
 }
 
 @Composable
-fun DateButton(
+fun MealPlannerButton(
     isActive: Boolean = true,
     text: String,
     isDisabled: Boolean = false,

@@ -1,3 +1,5 @@
+@file:JvmName("MenuListKt")
+
 package be.mbolle.mealplanner.ui.composables.menu
 
 import android.util.Log
@@ -5,18 +7,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,24 +24,21 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import be.mbolle.mealplanner.R
 import be.mbolle.mealplanner.data.entities.menus
 import be.mbolle.mealplanner.model.Menu
 import be.mbolle.mealplanner.model.isToday
 import be.mbolle.mealplanner.ui.composables.DateIcon
+import be.mbolle.mealplanner.ui.composables.MealPlannerList
 import be.mbolle.mealplanner.ui.theme.MealPlannerTheme
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 @Composable
-fun MenuItem(
+fun MenuListItem(
     menu: Menu,
     onMealAction: () -> Unit,
     modifier: Modifier = Modifier
@@ -56,59 +52,36 @@ fun MenuItem(
         if (menu.date.isToday()) FontWeight.Bold
         else FontWeight.Normal
 
-    Row(
-        modifier = Modifier
-            .background(
-                color = backgroundColor,
-                shape = RoundedCornerShape(10)
-            )
-            .height(IntrinsicSize.Min)
-            .then(modifier)
-    ) {
-
-        Column(
-            modifier = Modifier.weight(0.25f),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            DateIcon(
-                date = menu.date,
-                modifier = Modifier.padding(5.dp)
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .weight(0.85f)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center
-        ) {
-            Text(
-                menu.meal,
-                fontWeight = fontWeight,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Start
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .weight(0.15f)
-                .fillMaxHeight(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.more_horiz),
-                contentDescription = stringResource(
-                    R.string.more_icon
+    MealPlannerList(modifier = modifier.background(backgroundColor)) {
+        Row {
+            Column(
+                modifier = Modifier.weight(0.25f),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                DateIcon(
+                    date = menu.date,
+                    modifier = Modifier.padding(5.dp)
                 )
-            )
+            }
+            Column(
+                modifier = Modifier
+                    .weight(0.75f)
+                    .fillMaxHeight(),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    menu.meal,
+                    fontWeight = fontWeight,
+                    fontSize = 18.sp,
+                    textAlign = TextAlign.Start
+                )
+            }
         }
     }
 }
 
 @Composable
-fun Menu(modifier: Modifier = Modifier, mealsState: Collection<List<Menu>>, scrollIndex: Int) {
+fun MenuList(modifier: Modifier = Modifier, mealsState: Collection<List<Menu>>, scrollIndex: Int) {
     when (mealsState) {
         else -> {
             val lazyListState = rememberLazyListState()
@@ -126,16 +99,16 @@ fun Menu(modifier: Modifier = Modifier, mealsState: Collection<List<Menu>>, scro
                 mealsState.forEach { mealsPerWeek ->
                     Log.d("MealPlannerApp", mealsPerWeek.toString())
                     items(mealsPerWeek) { meal ->
-                        if (meal.date == LocalDate.of(2025, 3, 17)) {
+                        if (meal.date.isToday()) {
                             Box(modifier = Modifier.padding(bottom = 22.dp)) {
-                                MenuItem(
+                                MenuListItem(
                                     menu = meal,
                                     onMealAction = {},
                                     modifier = modifier.padding(vertical = 10.dp)
                                 )
                             }
                         } else {
-                            MenuItem(
+                            MenuListItem(
                                 menu = meal,
                                 onMealAction = {},
                                 modifier = modifier.padding(vertical = 10.dp)
@@ -159,14 +132,13 @@ fun MenuItemPreview() {
     val aMeal = menus.first()
 
     MealPlannerTheme {
-        MenuItem(
+        MenuListItem(
             menu = aMeal,
             onMealAction = {},
             modifier = Modifier
                 .padding(vertical = 10.dp)
                 .clip(shape = RoundedCornerShape(150.dp))
         )
-
     }
 }
 
@@ -178,7 +150,7 @@ fun MenuItemsPreview() {
             contentPadding = PaddingValues(vertical = 8.dp)
         ) {
             items(menus) { meal ->
-                MenuItem(
+                MenuListItem(
                     menu = meal,
                     onMealAction = {},
                     modifier = Modifier

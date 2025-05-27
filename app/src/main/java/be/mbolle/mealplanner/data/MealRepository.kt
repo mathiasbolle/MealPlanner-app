@@ -5,7 +5,6 @@ import be.mbolle.mealplanner.model.Meal
 
 interface MealRepository {
     suspend fun getMeal(): List<be.mbolle.mealplanner.data.entities.Meal>
-
 }
 
 class ApiMealRepository(val mealService: MealService): MealRepository {
