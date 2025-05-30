@@ -40,7 +40,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun MenuListItem(
     menu: Menu,
-    onMealAction: () -> Unit,
+    onMealAction: (meal: Menu) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val backgroundColor =
@@ -52,7 +52,9 @@ fun MenuListItem(
         if (menu.date.isToday()) FontWeight.Bold
         else FontWeight.Normal
 
-    MealPlannerList(modifier = modifier.background(backgroundColor)) {
+    MealPlannerList(
+        modifier = modifier.background(backgroundColor),
+        onClickOptions = { onMealAction(menu) }) {
         Row {
             Column(
                 modifier = Modifier.weight(0.25f),
@@ -81,7 +83,12 @@ fun MenuListItem(
 }
 
 @Composable
-fun MenuList(modifier: Modifier = Modifier, mealsState: Collection<List<Menu>>, scrollIndex: Int) {
+fun MenuList(
+    modifier: Modifier = Modifier,
+    mealsState: Collection<List<Menu>>,
+    scrollIndex: Int = 0,
+    onMealAction: (meal: Menu) -> Unit
+) {
     when (mealsState) {
         else -> {
             val lazyListState = rememberLazyListState()
@@ -103,14 +110,14 @@ fun MenuList(modifier: Modifier = Modifier, mealsState: Collection<List<Menu>>, 
                             Box(modifier = Modifier.padding(bottom = 22.dp)) {
                                 MenuListItem(
                                     menu = meal,
-                                    onMealAction = {},
-                                    modifier = modifier.padding(vertical = 10.dp)
+                                    onMealAction = onMealAction,
+                                    modifier = modifier.padding(vertical = 10.dp),
                                 )
                             }
                         } else {
                             MenuListItem(
                                 menu = meal,
-                                onMealAction = {},
+                                onMealAction = onMealAction,
                                 modifier = modifier.padding(vertical = 10.dp)
                             )
 

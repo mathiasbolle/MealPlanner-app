@@ -3,6 +3,7 @@ package be.mbolle.mealplanner.model
 import java.time.LocalDate
 
 data class Menu(
+    val id: Int,
     val meal: String,
     val date: LocalDate
     )

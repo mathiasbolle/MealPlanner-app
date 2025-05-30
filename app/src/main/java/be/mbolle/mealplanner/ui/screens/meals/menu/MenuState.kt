@@ -12,6 +12,7 @@ sealed interface MenuStatus {
     data class Succeed(
         val list: Collection<List<Menu>>,
         val scrollIndex: Int = 0,
+        val selectedMenu: Menu? = null
     ) : MenuStatus
     data class Error(val message: String) : MenuStatus
     object Loading : MenuStatus

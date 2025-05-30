@@ -14,11 +14,17 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import be.mbolle.mealplanner.ui.RecipeAppBar
 import be.mbolle.mealplanner.ui.nav.Meal
 import be.mbolle.mealplanner.ui.nav.Menu
+import be.mbolle.mealplanner.ui.nav.ReplaceMenu
 import be.mbolle.mealplanner.ui.screens.meals.recipe.MealContent
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuContent
+import be.mbolle.mealplanner.ui.screens.meals.menu.MenuStatus
+import be.mbolle.mealplanner.ui.screens.meals.menu.MenuViewModel
+import be.mbolle.mealplanner.ui.screens.meals.menu.replace.MenuItemReplace
 
 @Composable
 fun MealsScreen(modifier: Modifier = Modifier, innerPadding: PaddingValues) {
@@ -48,6 +54,7 @@ fun MealsNavHost(
 ) {
     val navController: NavHostController = rememberNavController()
 
+
     NavHost(navController = navController, modifier = modifier, startDestination = Menu) {
         composable<Menu> {
             Column {
@@ -68,7 +75,10 @@ fun MealsNavHost(
                     modifier = Modifier
                         .padding(innerPadding)
                         .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-                )
+                ) { menu ->
+                    //navigate to the right submenu
+                    navController.navigate(ReplaceMenu(1)) // mock to replace menu 1
+                }
             }
             BackHandler(true) { }
         }
@@ -99,6 +109,50 @@ fun MealsNavHost(
                 )
             }
             BackHandler(true) { }
+        }
+
+        composable<ReplaceMenu> {
+            val viewModel: MenuViewModel = viewModel(factory = MenuViewModel.Companion.Factory)
+            val state = viewModel.menuState
+
+            val args = it.toRoute<ReplaceMenu>()
+            val menuId = args.menu
+
+            Column {
+                recipeAppBar { mealSection ->
+                    when (mealSection) {
+                        MealSections.MENU -> {
+                            navController.navigate(route = Menu)
+                        }
+
+                        MealSections.FRIDGE -> {
+                            navController.navigate(route = Meal)
+                            Log.d("MealsScreen", "triggered...")
+                        }
+                    }
+                }
+                when (state.mealDetails) {
+                    is MenuStatus.Succeed -> {
+                        state.mealDetails.let { details ->
+                            MenuItemReplace(
+                                modifier = Modifier
+                                    .padding(innerPadding)
+                                    .padding(20.dp),
+                                initMenu = details.list.first().first(),
+                                menuList = details.list
+                            )
+                        }
+                    }
+
+                    is MenuStatus.Error -> {
+
+                    }
+
+                    MenuStatus.Loading -> {
+
+                    }
+                }
+            }
         }
     }
 }

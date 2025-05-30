@@ -36,6 +36,16 @@ class MenuViewModel(private val recipeRepository: RecipeRepository) : ViewModel(
         }
     }
 
+    fun choseMenu(menu: Menu) {
+        if (menuState.mealDetails is MenuStatus.Succeed) {
+            (menuState.mealDetails as MenuStatus.Succeed).let {
+                menuState = menuState.copy(
+                    mealDetails = it.copy(selectedMenu = menu)
+                )
+            }
+        }
+    }
+
     fun getMenu() {
         viewModelScope.launch {
             Log.d("MealPlannerViewModel", getInitMealDetails().await().toString())

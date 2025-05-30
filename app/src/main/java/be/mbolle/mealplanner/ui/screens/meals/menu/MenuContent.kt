@@ -1,5 +1,6 @@
 package be.mbolle.mealplanner.ui.screens.meals.menu
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +11,10 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -20,18 +25,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import be.mbolle.mealplanner.R
+import be.mbolle.mealplanner.model.Meal
+import be.mbolle.mealplanner.model.Menu
 import be.mbolle.mealplanner.ui.composables.MealPlannerButton
 import be.mbolle.mealplanner.ui.composables.DateButtons
+import be.mbolle.mealplanner.ui.composables.EditMealPlannerModal
+import be.mbolle.mealplanner.ui.composables.Option
 import be.mbolle.mealplanner.ui.composables.menu.MenuList
+import be.mbolle.mealplanner.ui.screens.meals.menu.replace.MenuItemReplace
 
 @Composable
-fun MenuContent(modifier: Modifier = Modifier) {
+fun MenuContent(modifier: Modifier = Modifier, onMenuClick: (menu: Menu) -> Unit) {
     val viewModel: MenuViewModel = viewModel(factory = MenuViewModel.Companion.Factory)
     val state = viewModel.menuState
 
     val thisWeek = stringResource(R.string.this_week_btn)
     val nextWeek = stringResource(R.string.next_week_btn)
     val nextMonth = stringResource(R.string.next_month_btn)
+
 
     Column {
         Column(modifier = modifier) {
@@ -59,6 +70,9 @@ fun MenuContent(modifier: Modifier = Modifier) {
                 is MenuStatus.Succeed -> {
                     state.mealDetails.let { details ->
 
+
+                        var isVisible by remember { mutableStateOf(false) }
+
                         Text(
                             stringResource(R.string.menu_subtitle),
                             modifier = Modifier.padding(top = 50.dp, bottom = 10.dp),
@@ -69,16 +83,38 @@ fun MenuContent(modifier: Modifier = Modifier) {
 
                         MenuList(
                             mealsState = details.list,
-                            scrollIndex = details.scrollIndex
+                            scrollIndex = details.scrollIndex,
+                            onMealAction = { menu ->
+                                isVisible = true
+                                viewModel.choseMenu(menu)
+                                Log.d("MenuContent", "test")
+                            }
+                        )
+
+                        EditMealPlannerModal(
+                            meal = Meal(state.mealDetails.selectedMenu?.meal.toString()),
+                            onDismissRequest = { isVisible = false },
+                            options = listOf(
+                                Option(
+                                    "Replace",
+                                    { onMenuClick(state.mealDetails.selectedMenu!!) }),
+                                Option("Remove", {}),
+                                Option("Restrict", {})
+                            ),
+                            isVisible = isVisible
                         )
                     }
                 }
 
                 is MenuStatus.Error -> {
-
                 }
+
                 MenuStatus.Loading -> {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center, modifier = Modifier.fillMaxSize()) {
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
                         Loading()
                     }
                 }

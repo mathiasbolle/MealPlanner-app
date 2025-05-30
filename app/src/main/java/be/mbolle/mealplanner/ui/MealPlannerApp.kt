@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,6 +50,8 @@ fun MealPlannerApp(modifier: Modifier = Modifier) {
                     MaterialTheme.colorScheme.primaryContainer
             )
             .statusBarsPadding()
+            .systemBarsPadding()
+            .safeDrawingPadding()
             .fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = { RecipeBottomBar() }

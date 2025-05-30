@@ -16,6 +16,6 @@ class ApiRecipeRepository(val recipeApiMenu: MenuService): RecipeRepository {
 fun List<be.mbolle.mealplanner.data.entities.Menu>.toMenuModel(): List<Menu> {
     return this.map { meal ->
         val mealString = meal.mealMenus.joinToString { meal -> meal.name }
-        return@map Menu(meal = mealString, date = meal.date)
+        return@map Menu(meal = mealString, date = meal.date, id = meal.id)
     }
 }
