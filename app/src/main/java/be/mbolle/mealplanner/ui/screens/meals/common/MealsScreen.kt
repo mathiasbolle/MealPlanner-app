@@ -1,6 +1,5 @@
 package be.mbolle.mealplanner.ui.screens.meals.common
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -14,17 +13,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
 import androidx.navigation.toRoute
-import be.mbolle.mealplanner.ui.RecipeAppBar
 import be.mbolle.mealplanner.ui.nav.Meal
 import be.mbolle.mealplanner.ui.nav.Menu
+import be.mbolle.mealplanner.ui.nav.RecipeAppBar
 import be.mbolle.mealplanner.ui.nav.ReplaceMenu
-import be.mbolle.mealplanner.ui.screens.meals.recipe.MealContent
-import be.mbolle.mealplanner.ui.screens.meals.menu.MenuContent
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuStatus
+import be.mbolle.mealplanner.ui.screens.meals.menu.MenuSubScreen
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuViewModel
 import be.mbolle.mealplanner.ui.screens.meals.menu.replace.MenuItemReplace
+import be.mbolle.mealplanner.ui.screens.meals.recipe.RecipeSubScreen
 
 @Composable
 fun MealsScreen(modifier: Modifier = Modifier, innerPadding: PaddingValues) {
@@ -54,60 +52,27 @@ fun MealsNavHost(
 ) {
     val navController: NavHostController = rememberNavController()
 
-
-    NavHost(navController = navController, modifier = modifier, startDestination = Menu) {
+    NavHost(
+        navController = navController,
+        modifier = modifier,
+        startDestination = Menu
+    ) {
         composable<Menu> {
-            Column {
-                recipeAppBar { mealSection ->
-                    when (mealSection) {
-                        MealSections.MENU -> {
-                            navController.navigate(route = Menu)
-                        }
-
-                        MealSections.FRIDGE -> {
-                            navController.navigate(route = Meal)
-                            Log.d("MealsScreen", "triggered...")
-                        }
-                    }
-                }
-
-                MenuContent(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .padding(start = 20.dp, end = 20.dp, top = 20.dp),
-                ) { menu ->
-                    //navigate to the right submenu
-                    navController.navigate(ReplaceMenu(1)) // mock to replace menu 1
-                }
-            }
+            MenuSubScreen(
+                innerPadding = innerPadding,
+                changeSection = { mealSection -> viewModel.changeMealSection(mealSection) },
+                navController = navController,
+                activeSection = viewModel.mealState.activeSection,
+            )
             BackHandler(true) { }
         }
         composable<Meal> {
-            Column {
-                RecipeAppBar(
-                    menuState = viewModel.mealState.activeSection,
-                    changeSection = { mealSection -> viewModel.changeMealSection(mealSection) },
-                    navigateTo = { mealSection ->
-                        when (mealSection) {
-                            MealSections.MENU -> {
-                                navController.navigate(route = Menu)
-                            }
-
-                            MealSections.FRIDGE -> {
-                                navController.navigate(route = Meal)
-                                Log.d("MealsScreen", "triggered...")
-                            }
-                        }
-                    },
-                    modifier = modifier
-                        .fillMaxWidth()
-                )
-                MealContent(
-                    modifier = Modifier
-                        .padding(innerPadding)
-                        .padding(20.dp),
-                )
-            }
+            RecipeSubScreen(
+                innerPadding = innerPadding,
+                changeSection = { mealSection -> viewModel.changeMealSection(mealSection) },
+                navController = navController,
+                activeSection = viewModel.mealState.activeSection,
+            )
             BackHandler(true) { }
         }
 
@@ -120,16 +85,7 @@ fun MealsNavHost(
 
             Column {
                 recipeAppBar { mealSection ->
-                    when (mealSection) {
-                        MealSections.MENU -> {
-                            navController.navigate(route = Menu)
-                        }
-
-                        MealSections.FRIDGE -> {
-                            navController.navigate(route = Meal)
-                            Log.d("MealsScreen", "triggered...")
-                        }
-                    }
+                    navController.navigateTo(mealSection)
                 }
                 when (state.mealDetails) {
                     is MenuStatus.Succeed -> {
@@ -154,5 +110,12 @@ fun MealsNavHost(
                 }
             }
         }
+    }
+}
+
+fun NavHostController.navigateTo(mealSections: MealSections) {
+    when (mealSections) {
+        MealSections.MENU -> this.navigate(Menu)
+        MealSections.FRIDGE -> this.navigate(Meal)
     }
 }

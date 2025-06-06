@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.data.entities
+package be.mbolle.mealplanner.data.dto
 
 import be.mbolle.mealplanner.model.Menu
 import java.time.LocalDate

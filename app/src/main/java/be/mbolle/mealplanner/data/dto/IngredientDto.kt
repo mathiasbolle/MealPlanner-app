@@ -1,13 +1,10 @@
-package be.mbolle.mealplanner.data.entities
+package be.mbolle.mealplanner.data.dto
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Ingredient(
+data class IngredientDto(
     val name: String,
     val kind: Int // should be extracted to a enum for better maintainability
 )
 
-enum class Kind {
-
-}

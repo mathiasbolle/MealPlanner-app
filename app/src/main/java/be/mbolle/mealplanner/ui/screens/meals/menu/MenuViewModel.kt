@@ -8,9 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
-import be.mbolle.mealplanner.data.ApiRecipeRepository
-import be.mbolle.mealplanner.data.RecipeRepository
-import be.mbolle.mealplanner.data.api.ktorHttpClient
+import be.mbolle.mealplanner.MainApplication
+import be.mbolle.mealplanner.data.MealRepository
 import be.mbolle.mealplanner.data.toMenuModel
 import be.mbolle.mealplanner.model.Menu
 import kotlinx.coroutines.Deferred
@@ -19,7 +18,7 @@ import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.temporal.WeekFields
 
-class MenuViewModel(private val recipeRepository: RecipeRepository) : ViewModel() {
+class MenuViewModel(private val mealRepository: MealRepository) : ViewModel() {
     var menuState by mutableStateOf(
         MenuState()
     )
@@ -28,7 +27,7 @@ class MenuViewModel(private val recipeRepository: RecipeRepository) : ViewModel(
     private fun getInitMealDetails(): Deferred<MenuStatus> {
         return viewModelScope.async {
             try {
-                val result = recipeRepository.getMenu().toMenuModel()
+                val result = mealRepository.getMenu().toMenuModel()
                 return@async MenuStatus.Succeed(list = mealsByWeek(result))
             } catch (e: Exception) {
                 return@async MenuStatus.Error(e.toString())
@@ -102,14 +101,8 @@ class MenuViewModel(private val recipeRepository: RecipeRepository) : ViewModel(
                 modelClass: Class<T>,
                 extras: CreationExtras
             ): T {
-
-                //bad practice i know :D
-
-                val recipeMenu = be.mbolle.mealplanner.data.api.Menu(client = ktorHttpClient)
-                val recipeRepository = ApiRecipeRepository(recipeMenu)
-
                 return MenuViewModel(
-                    recipeRepository = recipeRepository
+                    mealRepository = MainApplication.container.remoteMealRepository
                 ) as T
             }
         }

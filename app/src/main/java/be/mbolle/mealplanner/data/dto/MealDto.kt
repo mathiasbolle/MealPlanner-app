@@ -1,9 +1,9 @@
-package be.mbolle.mealplanner.data.entities
+package be.mbolle.mealplanner.data.dto
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Meal(
+data class MealDto(
     val id: Int,
     val name: String
 )

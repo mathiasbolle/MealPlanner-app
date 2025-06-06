@@ -1,6 +1,14 @@
-package be.mbolle.mealplanner.data.api
+package be.mbolle.mealplanner.di
 
 import android.util.Log
+import be.mbolle.mealplanner.data.MealRepository
+import be.mbolle.mealplanner.data.remote.RemoteMealRepository
+import be.mbolle.mealplanner.data.remote.api.IngredientService
+import be.mbolle.mealplanner.data.remote.api.IngredientServiceImpl
+import be.mbolle.mealplanner.data.remote.api.MealService
+import be.mbolle.mealplanner.data.remote.api.MealServiceImpl
+import be.mbolle.mealplanner.data.remote.api.MenuService
+import be.mbolle.mealplanner.data.remote.api.MenuServiceImpl
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
 import io.ktor.client.features.DefaultRequest
@@ -15,8 +23,32 @@ import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import kotlinx.serialization.json.Json
 
-private const val TIME_OUT = 60_000
+interface Container {
+    val remoteMealRepository: MealRepository
+    val menuService: MenuService
+    val mealService: MealService
+    val ingredientService: IngredientService
+    val client: HttpClient
+}
 
+class ContainerImpl: Container {
+    override val client: HttpClient
+        get() = ktorHttpClient
+    override val remoteMealRepository: MealRepository
+        get() = RemoteMealRepository(
+            this.menuService,
+            this.mealService,
+            this.ingredientService
+        )
+    override val menuService: MenuService
+        get() = MenuServiceImpl(client)
+    override val mealService: MealService
+        get() = MealServiceImpl(client)
+    override val ingredientService: IngredientService
+        get() = IngredientServiceImpl(client)
+}
+
+private const val TIME_OUT = 60_000
 val ktorHttpClient = HttpClient(Android) {
 
     install(JsonFeature) {

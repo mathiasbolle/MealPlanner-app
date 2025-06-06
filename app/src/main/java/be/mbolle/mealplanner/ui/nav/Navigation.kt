@@ -1,6 +1,5 @@
 package be.mbolle.mealplanner.ui.nav
 
-import be.mbolle.mealplanner.model.Menu
 import kotlinx.serialization.Serializable
 
 @Serializable

@@ -1,8 +1,6 @@
-package be.mbolle.mealplanner.data.entities
+package be.mbolle.mealplanner.data.dto
 
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.SerialName
-import kotlinx.serialization.Serializable
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
@@ -32,18 +30,3 @@ object LocalDateSerializer : KSerializer<LocalDate> {
     }
 }
 
-@Serializable
-data class Menu(
-    @SerialName("id")
-    val id: Int,
-    @SerialName("date")
-    @Serializable(with = LocalDateSerializer::class)
-    val date: LocalDate,
-    @SerialName("mealParts")
-    val mealMenus: List<MealMenu>
-)
-
-@Serializable
-data class MealMenu(
-    val name: String
-)

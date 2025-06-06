@@ -1,5 +1,6 @@
 package be.mbolle.mealplanner.ui.screens.meals.recipe
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +52,7 @@ fun MealContent(modifier: Modifier = Modifier) {
             }
 
             is RecipeStatus.Succeed -> {
+                Log.d("RecipeContent", "it is called...")
 
                 Box(modifier = Modifier.fillMaxSize()) {
                     MealList(mealList = state.recipeStatus.list)

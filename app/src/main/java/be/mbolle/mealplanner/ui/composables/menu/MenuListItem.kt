@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import be.mbolle.mealplanner.data.entities.menus
+import be.mbolle.mealplanner.data.dto.menus
 import be.mbolle.mealplanner.model.Menu
 import be.mbolle.mealplanner.model.isToday
 import be.mbolle.mealplanner.ui.composables.DateIcon
