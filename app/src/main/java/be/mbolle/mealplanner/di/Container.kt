@@ -1,8 +1,10 @@
 package be.mbolle.mealplanner.di
 
+import android.content.Context
 import android.util.Log
-import be.mbolle.mealplanner.data.MealRepository
-import be.mbolle.mealplanner.data.remote.RemoteMealRepository
+import be.mbolle.mealplanner.model.MealRepository
+import be.mbolle.mealplanner.data.RemoteMealRepository
+import be.mbolle.mealplanner.data.local.room.MealPlannerDatabase
 import be.mbolle.mealplanner.data.remote.api.IngredientService
 import be.mbolle.mealplanner.data.remote.api.IngredientServiceImpl
 import be.mbolle.mealplanner.data.remote.api.MealService
@@ -25,21 +27,25 @@ import kotlinx.serialization.json.Json
 
 interface Container {
     val remoteMealRepository: MealRepository
+    val roomdDb: MealPlannerDatabase
     val menuService: MenuService
     val mealService: MealService
     val ingredientService: IngredientService
     val client: HttpClient
 }
 
-class ContainerImpl: Container {
+class ContainerImpl(private val context: Context): Container {
     override val client: HttpClient
         get() = ktorHttpClient
     override val remoteMealRepository: MealRepository
         get() = RemoteMealRepository(
             this.menuService,
             this.mealService,
-            this.ingredientService
+            this.ingredientService,
+            roomdDb
         )
+    override val roomdDb: MealPlannerDatabase
+        get() = MealPlannerDatabase.getDatabase(context)
     override val menuService: MenuService
         get() = MenuServiceImpl(client)
     override val mealService: MealService

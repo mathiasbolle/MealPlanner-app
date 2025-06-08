@@ -26,13 +26,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import be.mbolle.mealplanner.R
 import be.mbolle.mealplanner.model.Meal
+import be.mbolle.mealplanner.model.MealKinds
 import be.mbolle.mealplanner.model.Menu
-import be.mbolle.mealplanner.ui.composables.MealPlannerButton
 import be.mbolle.mealplanner.ui.composables.DateButtons
 import be.mbolle.mealplanner.ui.composables.EditMealPlannerModal
+import be.mbolle.mealplanner.ui.composables.MealPlannerButton
 import be.mbolle.mealplanner.ui.composables.Option
 import be.mbolle.mealplanner.ui.composables.menu.MenuList
-import be.mbolle.mealplanner.ui.screens.meals.menu.replace.MenuItemReplace
 
 @Composable
 fun MenuContent(modifier: Modifier = Modifier, onMenuClick: (menu: Menu) -> Unit) {
@@ -92,7 +92,7 @@ fun MenuContent(modifier: Modifier = Modifier, onMenuClick: (menu: Menu) -> Unit
                         )
 
                         EditMealPlannerModal(
-                            meal = Meal(state.mealDetails.selectedMenu?.meal.toString()),
+                            meal = Meal(state.mealDetails.selectedMenu?.meal.toString(), MealKinds.OTHER),
                             onDismissRequest = { isVisible = false },
                             options = listOf(
                                 Option(

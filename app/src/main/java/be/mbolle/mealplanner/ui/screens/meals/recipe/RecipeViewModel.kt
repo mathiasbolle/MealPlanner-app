@@ -9,8 +9,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import be.mbolle.mealplanner.MainApplication
-import be.mbolle.mealplanner.data.MealRepository
-import be.mbolle.mealplanner.data.toMealModel
+import be.mbolle.mealplanner.model.MealKinds
+import be.mbolle.mealplanner.model.MealRepository
+import be.mbolle.mealplanner.model.use_cases.GetMealsUseCase
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -19,6 +20,7 @@ import kotlinx.coroutines.withContext
 
 class RecipeViewModel(
     private val mealRepository: MealRepository,
+    private val mealsUseCase: GetMealsUseCase
 ) : ViewModel() {
     var recipeState: RecipeState by mutableStateOf(RecipeState())
 
@@ -30,7 +32,7 @@ class RecipeViewModel(
     private fun getInitRecipes(): Deferred<RecipeStatus> {
         return viewModelScope.async {
             try {
-                val result = mealRepository.getMeal().toMealModel()
+                val result = mealsUseCase()
                 Log.d("RecipeViewModel", result.toString())
                 return@async RecipeStatus.Succeed(list = result)
             } catch (e: Exception) {
@@ -88,7 +90,7 @@ class RecipeViewModel(
     fun createRecipe() {
         viewModelScope.launch {
             mealRepository.createIngredientFromMeal(
-                be.mbolle.mealplanner.model.Meal(recipeState.mealCreation.name)
+                be.mbolle.mealplanner.model.Meal(recipeState.mealCreation.name, MealKinds.OTHER)
             )
 
             withContext(Dispatchers.Main) {
@@ -106,6 +108,7 @@ class RecipeViewModel(
                 extras: CreationExtras
             ): T {
                 return RecipeViewModel(
+                    mealsUseCase = GetMealsUseCase(MainApplication.container.remoteMealRepository),
                     mealRepository = MainApplication.container.remoteMealRepository
                 ) as T
             }

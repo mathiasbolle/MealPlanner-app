@@ -1,5 +1,6 @@
 package be.mbolle.mealplanner.data.dto
 
+import be.mbolle.mealplanner.data.toLocalDate
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.SerialDescriptor
 import kotlinx.serialization.descriptors.buildClassSerialDescriptor
@@ -21,12 +22,8 @@ object LocalDateSerializer : KSerializer<LocalDate> {
 
     override fun deserialize(decoder: Decoder): LocalDate {
         val stringDate = decoder.decodeString()
-        val dateSequence = stringDate.splitToSequence("-").toList()
-        val year = dateSequence.first().toInt()
-        val month = dateSequence[1].toInt()
-        val day = dateSequence.last().toInt()
 
-        return LocalDate.of(year, month, day)
+        return stringDate.toLocalDate()
     }
 }
 

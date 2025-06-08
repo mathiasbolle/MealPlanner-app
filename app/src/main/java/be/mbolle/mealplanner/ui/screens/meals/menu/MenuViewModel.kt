@@ -9,8 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import be.mbolle.mealplanner.MainApplication
-import be.mbolle.mealplanner.data.MealRepository
-import be.mbolle.mealplanner.data.toMenuModel
+import be.mbolle.mealplanner.model.MealRepository
 import be.mbolle.mealplanner.model.Menu
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
@@ -27,7 +26,7 @@ class MenuViewModel(private val mealRepository: MealRepository) : ViewModel() {
     private fun getInitMealDetails(): Deferred<MenuStatus> {
         return viewModelScope.async {
             try {
-                val result = mealRepository.getMenu().toMenuModel()
+                val result = mealRepository.getMenu()
                 return@async MenuStatus.Succeed(list = mealsByWeek(result))
             } catch (e: Exception) {
                 return@async MenuStatus.Error(e.toString())
