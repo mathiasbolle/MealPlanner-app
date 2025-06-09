@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import be.mbolle.mealplanner.ui.nav.RecipeAppBar
+import be.mbolle.mealplanner.ui.navigateTo
 
 @Composable
 fun SubScreenBuilder(

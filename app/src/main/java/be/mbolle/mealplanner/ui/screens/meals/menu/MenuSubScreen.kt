@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import be.mbolle.mealplanner.ui.nav.Destination
 import be.mbolle.mealplanner.ui.nav.ReplaceMenu
 import be.mbolle.mealplanner.ui.screens.meals.common.MealSections
 import be.mbolle.mealplanner.ui.screens.meals.common.SubScreenBuilder
@@ -31,7 +32,7 @@ fun MenuSubScreen(
                     .padding(innerPadding)
                     .padding(start = 20.dp, end = 20.dp, top = 20.dp),
         ) { menu ->
-            navController.navigate(ReplaceMenu(1)) // mock to replace menu 1
+            navController.navigate(Destination.Meals.ReplaceMenu(1)) // mock to replace menu 1
         }
     }
 }

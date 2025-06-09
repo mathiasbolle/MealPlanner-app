@@ -17,34 +17,39 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import be.mbolle.mealplanner.R
 
 
-enum class Destination(
-    val route: String,
-    val label: String,
-    @DrawableRes val icon: Int,
-    val contentDescription: String,
-) {
-    MEALS("meals", "Meals", R.drawable.meals, "Meals"),
-    INGREDIENTS("ingredients", "Ingredients", R.drawable.ingredients, "Ingredients")
-}
-
+//enum class Destination(
+//    val label: String,
+//    @DrawableRes val icon: Int,
+//    val contentDescription: String,
+//) {
+//    MEALS( "Meals", R.drawable.meals, "Meals"),
+//    INGREDIENTS("Ingredients", R.drawable.ingredients, "Ingredients")
+//}
+//
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipeBottomBar(modifier: Modifier = Modifier) {
-    var selectedDestination by rememberSaveable { mutableIntStateOf(Destination.MEALS.ordinal) }
+fun RecipeBottomBar(modifier: Modifier = Modifier, navHostController: NavHostController) {
+    var selectedDestination by rememberSaveable { mutableIntStateOf(Destination.Meals.toEnum().ordinal) }
 
     NavigationBar(
         modifier = modifier,
         windowInsets = NavigationBarDefaults.windowInsets,
         containerColor = MaterialTheme.colorScheme.primaryContainer
     ) {
-        Destination.entries.forEachIndexed { index, destination ->
+        BottomNavigation.entries.forEachIndexed { index, destination ->
             NavigationBarItem(
                 selected = index == selectedDestination,
                 onClick = {
                     selectedDestination = index
+                    navHostController.navigate(route = destination.toSealedClass()) {
+                        popUpTo<Destination.Meals> {
+                            inclusive = true
+                        }
+                    }
                 },
                 icon = {
                     Icon(
@@ -60,3 +65,4 @@ fun RecipeBottomBar(modifier: Modifier = Modifier) {
         }
     }
 }
+
