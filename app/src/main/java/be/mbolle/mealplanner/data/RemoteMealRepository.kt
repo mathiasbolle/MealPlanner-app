@@ -60,7 +60,7 @@ class RemoteMealRepository(
         }
     }
 
-    override suspend fun getMeal(): List<Meal> {
+    override suspend fun getFoodItem(): List<Meal> {
         val mealMenuDao = mealPlannerDatabase.getMealMenuDao()
         return try {
             val meals = mealService.getMeal()

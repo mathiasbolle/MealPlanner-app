@@ -1,5 +1,6 @@
 package be.mbolle.mealplanner.ui.composables.menu
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

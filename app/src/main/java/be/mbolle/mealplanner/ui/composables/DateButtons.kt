@@ -9,6 +9,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -29,57 +32,24 @@ fun DateButtons(
                 Spacer(modifier = Modifier.width(10.dp))
             }
         }
-
-        /*
-        Box(
-            modifier = Modifier
-                .background(
-                    color = MaterialTheme.colorScheme.secondaryContainer,
-                    shape = RoundedCornerShape(7.dp)
-                )
-                .clickable { onClickCurrentWeek() }
-                .padding(horizontal = 10.dp, vertical = 5.dp)
-
-        ) {
-            Text(stringResource(R.string.this_week_btn))
-        }
-
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Box(
-            modifier = Modifier
-                .border(
-                    2.dp,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = RoundedCornerShape(7.dp)
-                )
-                .clickable { onClickNextWeek() }
-                .padding(horizontal = 10.dp, vertical = 5.dp)
-
-        ) {
-            Text(stringResource(R.string.next_week_btn))
-        }
-
-        Spacer(modifier = Modifier.width(10.dp))
-
-        Box(
-            modifier = Modifier
-                .border(
-                    2.dp,
-                    color = MaterialTheme.colorScheme.outline,
-                    shape = RoundedCornerShape(7.dp)
-                )
-                .clickable { onClickNextMonth() }
-                .padding(horizontal = 10.dp, vertical = 5.dp)
-
-        ) {
-            Text(stringResource(R.string.next_month_btn))
-        }
-    }
-         */
-
     }
 }
+
+@Composable
+fun DateButtonsLazyRow(
+    modifier: Modifier = Modifier,
+    buttons: List<@Composable () -> Unit>
+) {
+    LazyRow(horizontalArrangement = Arrangement.Start, modifier = modifier) {
+        itemsIndexed (buttons) { index, value ->
+            value()
+            if (index + 1 < buttons.size) {
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+        }
+    }
+}
+
 
 @Composable
 fun MealPlannerButton(

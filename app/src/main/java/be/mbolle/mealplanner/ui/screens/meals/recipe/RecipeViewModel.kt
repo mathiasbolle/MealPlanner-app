@@ -23,6 +23,7 @@ class RecipeViewModel(
     private val mealsUseCase: GetMealsUseCase
 ) : ViewModel() {
     var recipeState: RecipeState by mutableStateOf(RecipeState())
+        private set
 
     init {
         // load the API

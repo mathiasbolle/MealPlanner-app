@@ -28,6 +28,7 @@ import be.mbolle.mealplanner.ui.composables.DateIcon
 import be.mbolle.mealplanner.ui.nav.Destination
 import be.mbolle.mealplanner.ui.nav.RecipeAppBar
 import be.mbolle.mealplanner.ui.nav.RecipeBottomBar
+import be.mbolle.mealplanner.ui.screens.ingredients.IngredientScreen
 import be.mbolle.mealplanner.ui.screens.meals.common.MealSections
 import be.mbolle.mealplanner.ui.screens.meals.common.MealViewModel
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuStatus
@@ -142,6 +143,7 @@ fun MealPlannerNavHost(
 
         navigation<Destination.Ingredients>(startDestination = Destination.Ingredients.IngredientList) {
             composable<Destination.Ingredients.IngredientList> {
+                IngredientScreen(modifier = Modifier.padding(all = 20.dp))
 
             }
         }

@@ -1,13 +1,57 @@
 package be.mbolle.mealplanner.ui.screens.ingredients
 
+import android.util.Log
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import be.mbolle.mealplanner.ui.composables.DateButtonsLazyRow
+import be.mbolle.mealplanner.ui.composables.MealPlannerButton
+import be.mbolle.mealplanner.ui.composables.menu.MealList
+import java.util.Locale
 
 @Composable
 fun IngredientScreen(
     modifier: Modifier = Modifier,
 ) {
+    val viewmodel: IngredientViewModel = viewModel(factory = IngredientViewModel.Factory)
+    val state = viewmodel.ingredientState
 
+    Column(modifier = modifier) {
+        when(state.ingredientStatus) {
 
+            is IngredientStatus.Error -> {
+                // what to do if it is restored from local database?
+            }
+            IngredientStatus.Loading -> {
 
+            }
+            is IngredientStatus.Succeed -> {
+
+                val mealKindComposable: List<@Composable () -> Unit> =
+                    (state.ingredientStatus.ingredientCategories.map { x -> { MealPlannerButton(false,
+                        x.toString().lowercase(Locale.ROOT)
+                    ) {} } })
+
+                DateButtonsLazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    buttons = mealKindComposable
+                )
+
+                Log.d("IngredientScreen", "test")
+                Box(modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = 50.dp)) {
+                    MealList(mealList = state.ingredientStatus.list)
+
+                }
+            }
+        }
+
+    }
 }

@@ -8,6 +8,6 @@ import kotlinx.coroutines.withContext
 
 class GetMealsUseCase(val repository: MealRepository) {
     suspend operator fun invoke(): List<Meal> = withContext(Dispatchers.IO) {
-        repository.getMeal().filter { meal -> meal.mealKind == MealKinds.DISH }
+        repository.getFoodItem().filter { meal -> meal.mealKind == MealKinds.DISH }
     }
 }
