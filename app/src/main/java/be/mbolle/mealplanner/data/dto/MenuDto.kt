@@ -14,3 +14,12 @@ data class MenuDto(
     @SerialName("mealParts")
     val mealMenuDtos: List<MealMenuDto>
 )
+
+@Serializable
+data class MenuDateDto(
+    @SerialName("id")
+    val id: Int,
+    @SerialName("date")
+    @Serializable(with = LocalDateSerializer::class)
+    val date: LocalDate,
+)

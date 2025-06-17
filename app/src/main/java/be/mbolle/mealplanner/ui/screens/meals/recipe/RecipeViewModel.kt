@@ -9,9 +9,11 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import be.mbolle.mealplanner.MainApplication
+import be.mbolle.mealplanner.model.Meal
 import be.mbolle.mealplanner.model.MealKinds
 import be.mbolle.mealplanner.model.MealRepository
 import be.mbolle.mealplanner.model.use_cases.GetMealsUseCase
+import be.mbolle.mealplanner.ui.screens.meals.menu.MenuStatus
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
@@ -39,6 +41,19 @@ class RecipeViewModel(
             } catch (e: Exception) {
                 Log.d("RecipeViewModel", e.toString())
                 return@async RecipeStatus.Error(e.toString())
+            }
+        }
+    }
+
+
+    fun choseMeal(meal: Meal) {
+        if (recipeState.recipeStatus is RecipeStatus.Succeed) {
+            (recipeState.recipeStatus as RecipeStatus.Succeed).let {
+                recipeState = recipeState.copy(
+                    recipeStatus = it.copy(
+                        selectedMeal = meal
+                    )
+                )
             }
         }
     }

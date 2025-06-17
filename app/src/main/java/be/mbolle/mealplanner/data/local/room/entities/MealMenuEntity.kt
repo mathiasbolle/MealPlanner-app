@@ -10,7 +10,7 @@ import androidx.room.PrimaryKey
 
     tableName = "meal_menu")
 data class MealMenuEntity(
-    @PrimaryKey(autoGenerate = true) val mealMenuId: Long= 0,
+    @PrimaryKey(autoGenerate = false) val mealMenuId: Int,
     val name: String,
     val kind: String,
 )

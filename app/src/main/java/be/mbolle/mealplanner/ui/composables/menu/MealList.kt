@@ -1,6 +1,5 @@
 package be.mbolle.mealplanner.ui.composables.menu
 
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,13 +39,13 @@ fun MealListItem(meal: Meal, modifier: Modifier = Modifier, onClickOptions: (mea
 }
 
 @Composable
-fun MealList(modifier: Modifier = Modifier, mealList: List<Meal>) {
-    LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp) ) {
+fun MealList(modifier: Modifier = Modifier, mealList: List<Meal>, onClickOptions: (Meal) -> Unit) {
+    LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
         items(mealList) { meal ->
             MealListItem(
                 meal = meal,
                 modifier = modifier.padding(vertical = 10.dp),
-                onClickOptions = {}
+                onClickOptions = { onClickOptions(meal) }
             )
         }
     }

@@ -7,8 +7,11 @@ import kotlinx.serialization.descriptors.buildClassSerialDescriptor
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 object LocalDateSerializer : KSerializer<LocalDate> {
+    private val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
     override val descriptor: SerialDescriptor
         get() = buildClassSerialDescriptor("be.mbolle.mealplanner.")
 
@@ -16,8 +19,7 @@ object LocalDateSerializer : KSerializer<LocalDate> {
         encoder: Encoder,
         value: LocalDate
     ) {
-        //TODO encode this to the YYYY-MM-DD format
-        //encoder.encodeString(value.)
+        encoder.encodeString(value.format(formatter)) // Serialize to "yyyy-MM-dd"
     }
 
     override fun deserialize(decoder: Decoder): LocalDate {

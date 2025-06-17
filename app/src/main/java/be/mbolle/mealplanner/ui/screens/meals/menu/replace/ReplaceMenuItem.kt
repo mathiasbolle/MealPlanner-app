@@ -1,5 +1,6 @@
 package be.mbolle.mealplanner.ui.screens.meals.menu.replace
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,11 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.Create
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import be.mbolle.mealplanner.R
 import be.mbolle.mealplanner.model.Menu
 import be.mbolle.mealplanner.ui.composables.MealPlannerButton
@@ -31,34 +30,47 @@ import be.mbolle.mealplanner.ui.composables.menu.MenuListItem
 @Composable
 fun MenuItemReplace(
     modifier: Modifier = Modifier,
-    initMenu: Menu,
-    menuList: Collection<List<Menu>>
+    menuList: Collection<List<Menu>>,
+    navigateBack: () -> Unit
 ) {
+    val replaceMenuViewModel: ReplaceMenuViewModel = viewModel(factory = ReplaceMenuViewModel.Factory)
+    val state = replaceMenuViewModel.replaceMenuState.value
+
+
     Column(modifier = modifier) {
         //replace composable
-        ReplaceChooser(initMenu, initMenu)
+        if (state != null) {
+            val state = replaceMenuViewModel.replaceMenuState.value
 
-        Spacer(modifier = Modifier.padding(vertical = 30.dp))
-        //menu composable should be integrated
+            ReplaceChooser(state?.fromMenu!!, state.toMenu)
 
-        Column(modifier = Modifier.fillMaxHeight(0.9f)) {
-            MenuList(
-                mealsState = menuList, scrollIndex = 0,
-                modifier = Modifier.weight(8f)
-            ) { }
+            Spacer(modifier = Modifier.padding(vertical = 30.dp))
+            //menu composable should be integrated
 
-
-
-
-        }
-        Row(
-            horizontalArrangement = Arrangement.End,
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            MealPlannerButton(text = "Cancel") { }
-            Spacer(modifier = Modifier.padding(7.dp))
-            MealPlannerButton(text = "Confirm") { }
+            Column(modifier = Modifier.fillMaxHeight(0.9f)) {
+                MenuList(
+                    mealsState = menuList, scrollIndex = 0,
+                    modifier = Modifier.weight(8f),
+                    onMenuAction = { meal ->
+                        Log.d("ReplaceMenuItem", meal.toString())
+                        replaceMenuViewModel.replaceMenu(meal)
+                    }
+                )
+            }
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                MealPlannerButton(text = "Cancel") {
+                    navigateBack()
+                }
+                Spacer(modifier = Modifier.padding(7.dp))
+                MealPlannerButton(text = "Confirm") {
+                    replaceMenuViewModel.confirm()
+                    navigateBack()
+                }
+            }
         }
     }
 }
@@ -82,13 +94,27 @@ fun ReplaceChooser(
 
         Box {
             Column {
-                MenuListItem(initMenu, onMealAction = {}, Modifier.padding(10.dp))
+                MenuListItem(
+                    menu = initMenu,
+                    modifier = Modifier.padding(10.dp),
+                    highlightToday = false
+                )
                 Spacer(modifier = Modifier.padding(vertical = 10.dp))
 
                 if (chosenMenu == null) {
+                    MenuListItem(
+                        menu = null,
+                        onMealAction = {},
+                        modifier = Modifier.padding(10.dp),
+                        highlightToday = false
+                    )
 
                 } else {
-                    MenuListItem(initMenu, onMealAction = {}, modifier = Modifier.padding(10.dp))
+                    MenuListItem(
+                        menu = chosenMenu,
+                        modifier = Modifier.padding(10.dp),
+                        highlightToday = false
+                    )
                 }
             }
             Icon(

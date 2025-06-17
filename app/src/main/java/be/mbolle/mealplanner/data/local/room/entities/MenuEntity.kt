@@ -6,11 +6,13 @@ import androidx.room.PrimaryKey
 import java.time.LocalDate
 
 @Entity(
-    indices = [Index(value = ["date"],
-        unique = true)],
+    indices = [Index(
+        value = ["date"], // this ensures that the swap functionality works as expected.
+        unique = true
+    )],
     tableName = "menu"
 )
 data class MenuEntity(
-    @PrimaryKey(autoGenerate = true) val menuId: Int = 0,
+    @PrimaryKey(autoGenerate = false) val menuId: Int,
     val date: LocalDate,
 )

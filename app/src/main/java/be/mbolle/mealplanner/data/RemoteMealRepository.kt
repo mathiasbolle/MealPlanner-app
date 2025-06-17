@@ -2,7 +2,9 @@ package be.mbolle.mealplanner.data
 
 import android.util.Log
 import be.mbolle.mealplanner.data.dto.IngredientDto
+import be.mbolle.mealplanner.data.dto.MenuDateDto
 import be.mbolle.mealplanner.data.local.room.MealPlannerDatabase
+import be.mbolle.mealplanner.data.local.room.dao.toModel
 import be.mbolle.mealplanner.data.local.room.entities.MealMenuEntity
 import be.mbolle.mealplanner.data.local.room.entities.MenuEntity
 import be.mbolle.mealplanner.data.local.room.entities.MenuMealMenuCrossRef
@@ -13,10 +15,7 @@ import be.mbolle.mealplanner.model.Meal
 import be.mbolle.mealplanner.model.MealRepository
 import be.mbolle.mealplanner.model.Menu
 import be.mbolle.mealplanner.model.toMealModelFromDb
-import be.mbolle.mealplanner.model.toMenuModel
 import be.mbolle.mealplanner.model.toMenuModelFromDb
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 class RemoteMealRepository(
     private val menuService: MenuService,
@@ -24,21 +23,26 @@ class RemoteMealRepository(
     private val ingredientService: IngredientService,
     private val mealPlannerDatabase: MealPlannerDatabase,
 ) : MealRepository {
+    private val menuMealMenuDao = mealPlannerDatabase.getMenuWithMealMenuDao()
 
     override suspend fun getMenu(): List<Menu> {
         val menuDao = mealPlannerDatabase.getMenuDao()
         val menuMealMenuDao = mealPlannerDatabase.getMenuWithMealMenuDao()
         val mealMenuDao = mealPlannerDatabase.getMealMenuDao()
 
+
+        val cachedMenus = menuMealMenuDao.getMenuWithMealMenus().toMenuModelFromDb()
+
         try {
             val menus = menuService.getMenu()
             menus.forEach { menu ->
-                val insertedMenuId = menuDao.insertMenu(MenuEntity(date = menu.date))
+                val insertedMenuId = menuDao.insertMenu(MenuEntity(date = menu.date, menuId = menu.id))
 
                 menu.mealMenuDtos.forEach { mealMenu ->
                     val insertedMealMenuId =
                         mealMenuDao.insertMealMenu(
                             MealMenuEntity(
+                                mealMenuId = mealMenu.id,
                                 name = mealMenu.name,
                                 kind = mealMenu.kind
                             )
@@ -52,12 +56,15 @@ class RemoteMealRepository(
                     )
                 }
             }
-            return menus.toMenuModel()
-        } catch (e: Exception) {
-            val menus = menuMealMenuDao.getMenuWithMealMenus().toMenuModelFromDb()
-            Log.d("RemoteMealRepository", menus.toString())
-            return menus
+            return cachedMenus
+        } catch (_: Exception) {
+            Log.d("RemoteMealRepository", cachedMenus.toString())
+            return cachedMenus
         }
+    }
+
+    override suspend fun getMenuById(id: Int): Menu {
+        return menuMealMenuDao.getMenuWithMealMenuById(id).toModel()
     }
 
     override suspend fun getFoodItem(): List<Meal> {
@@ -69,7 +76,8 @@ class RemoteMealRepository(
                 mealMenuDao.insertMealMenu(
                     MealMenuEntity(
                         name = meal.name,
-                        kind = meal.kind
+                        kind = meal.kind,
+                        mealMenuId = meal.id
                     )
                 )
             }
@@ -84,23 +92,11 @@ class RemoteMealRepository(
         return ingredientService.addIngredient(IngredientDto(meal.name, 7))
     }
 
-    private suspend fun refreshCache() = withContext(Dispatchers.IO) {
-        val menuDao = mealPlannerDatabase.getMenuDao()
-        val mealMenuDao = mealPlannerDatabase.getMealMenuDao()
+    override suspend fun deleteMenu(id: Int) {
+        return menuService.removeMenu(id)
+    }
 
-        menuService.getMenu().forEach { menu ->
-            val insertedMenuId = menuDao.insertMenu(MenuEntity(date = menu.date))
-
-            menu.mealMenuDtos.forEach { mealMenu ->
-//                val insertedMealMenuId =
-//                    mealMenuDao.insertMealMenu(MealMenuEntity(name = mealMenu.name))
-
-//                menuDao.insertMenuWithMealMenu(
-//                    MenuMealMenuCrossRef(
-//                        insertedMealMenuId,
-//                        insertedMenuId
-//                    )
-            }
-        }
+    override suspend fun switchMenu(id: Int, menu: Menu) {
+        menuService.swapMenu(id, MenuDateDto(menu.id, menu.date))
     }
 }

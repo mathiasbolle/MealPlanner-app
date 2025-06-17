@@ -8,15 +8,28 @@ import be.mbolle.mealplanner.data.local.room.entities.MenuWithMealMenus
 
 interface MealRepository {
     suspend fun getMenu(): List<Menu>
+    suspend fun getMenuById(id: Int): Menu
     suspend fun getFoodItem(): List<Meal>
     suspend fun createIngredientFromMeal(meal: Meal)
+    suspend fun deleteMenu(id: Int)
+    suspend fun switchMenu(id: Int, menu: Menu)
 }
 
 fun List<MenuDto>.toMenuModel(): List<Menu> {
     return this.map { meal ->
         val mealString = meal.mealMenuDtos.joinToString { meal -> meal.name }
+        Log.d("MealRepository", Menu(meal = mealString, date = meal.date, id = meal.id).toString())
         return@map Menu(meal = mealString, date = meal.date, id = meal.id)
     }
+}
+
+fun MenuDto.toMenuModel(): Menu {
+    val mealString = mealMenuDtos.joinToString { meal -> meal.name }
+    return Menu(
+        id = this.id,
+        meal = mealString,
+        date = this.date
+    )
 }
 
 fun List<MenuWithMealMenus>.toMenuModelFromDb(): List<Menu> {

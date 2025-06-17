@@ -32,7 +32,7 @@ fun MenuSubScreen(
                     .padding(innerPadding)
                     .padding(start = 20.dp, end = 20.dp, top = 20.dp),
         ) { menu ->
-            navController.navigate(Destination.Meals.ReplaceMenu(1)) // mock to replace menu 1
+            navController.navigate(Destination.Meals.ReplaceMenu(menu.id))
         }
     }
 }

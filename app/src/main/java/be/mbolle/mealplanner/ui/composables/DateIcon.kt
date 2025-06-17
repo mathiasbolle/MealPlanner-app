@@ -18,7 +18,7 @@ import be.mbolle.mealplanner.util.getAbbrDay
 import java.time.LocalDate
 
 @Composable
-fun DateIcon(modifier: Modifier = Modifier, date: LocalDate) {
+fun DateIcon(modifier: Modifier = Modifier, date: LocalDate?) {
     Box(
         modifier = Modifier
             .background(
@@ -35,11 +35,11 @@ fun DateIcon(modifier: Modifier = Modifier, date: LocalDate) {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                date.dayOfWeek.getAbbrDay(),
+                date?.dayOfWeek?.getAbbrDay() ?: "",
                 style = TextStyle()
             ) // implicitly set the includeFontPadding to false
             Text(
-                "${date.dayOfMonth}",
+                "${date?.dayOfMonth ?: ""}",
                 fontWeight = FontWeight.Light
             ) //TODO correctly align this  https://developer.android.com/develop/ui/compose/layouts/intrinsic-measurements#intrinsics-in-action
         }

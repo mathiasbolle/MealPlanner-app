@@ -28,6 +28,7 @@ import be.mbolle.mealplanner.R
 import be.mbolle.mealplanner.model.Meal
 import be.mbolle.mealplanner.model.MealKinds
 import be.mbolle.mealplanner.model.Menu
+import be.mbolle.mealplanner.ui.composables.AlertMealDialog
 import be.mbolle.mealplanner.ui.composables.DateButtons
 import be.mbolle.mealplanner.ui.composables.EditMealPlannerModal
 import be.mbolle.mealplanner.ui.composables.MealPlannerButton
@@ -71,7 +72,8 @@ fun MenuContent(modifier: Modifier = Modifier, onMenuClick: (menu: Menu) -> Unit
                     state.mealDetails.let { details ->
 
 
-                        var isVisible by remember { mutableStateOf(false) }
+                        var isModalVisible by remember { mutableStateOf(false) }
+                        var isAlertBoxVisible by remember { mutableStateOf(false) }
 
                         Text(
                             stringResource(R.string.menu_subtitle),
@@ -85,24 +87,40 @@ fun MenuContent(modifier: Modifier = Modifier, onMenuClick: (menu: Menu) -> Unit
                             mealsState = details.list,
                             scrollIndex = details.scrollIndex,
                             onMealAction = { menu ->
-                                isVisible = true
+                                isModalVisible = true
                                 viewModel.choseMenu(menu)
                                 Log.d("MenuContent", "test")
                             }
                         )
 
                         EditMealPlannerModal(
-                            meal = Meal(state.mealDetails.selectedMenu?.meal.toString(), MealKinds.OTHER),
-                            onDismissRequest = { isVisible = false },
+                            meal = Meal(
+                                state.mealDetails.selectedMenu?.meal.toString(),
+                                MealKinds.OTHER
+                            ),
+                            onDismissRequest = { isModalVisible = false },
                             options = listOf(
                                 Option(
                                     "Replace",
                                     { onMenuClick(state.mealDetails.selectedMenu!!) }),
-                                Option("Remove", {}),
+                                Option("Remove", { isAlertBoxVisible = true }),
                                 Option("Restrict", {})
                             ),
-                            isVisible = isVisible
+                            isVisible = isModalVisible
                         )
+
+                        if (isAlertBoxVisible) {
+                            isModalVisible = false
+                            AlertMealDialog(
+                                onDismissRequest = { isAlertBoxVisible = false },
+                                onConfirmation = {
+                                    isAlertBoxVisible = false
+                                    viewModel.deleteMenu()
+                                },
+                                "Confirmation",
+                                "Are you sure you want to remove ${state.mealDetails.selectedMenu?.meal} on ${state.mealDetails.selectedMenu?.date} from the menu?"
+                            )
+                        }
                     }
                 }
 

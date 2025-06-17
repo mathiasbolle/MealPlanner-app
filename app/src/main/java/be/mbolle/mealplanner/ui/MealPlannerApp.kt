@@ -1,5 +1,6 @@
 package be.mbolle.mealplanner.ui
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -110,7 +111,11 @@ fun MealPlannerNavHost(
                 val state = viewModel.menuState
 
                 val args = it.toRoute<Destination.Meals.ReplaceMenu>()
-                val menuId = args.menu
+                val menu: Int? = it.savedStateHandle.get<Int>("menu")
+
+                Log.d(
+                    "MealPlannerApp", menu.toString()
+                )
 
                 Column {
                     recipeAppBar { mealSection ->
@@ -123,9 +128,10 @@ fun MealPlannerNavHost(
                                     modifier = Modifier
                                         .padding(innerPadding)
                                         .padding(20.dp),
-                                    initMenu = details.list.first().first(),
                                     menuList = details.list
-                                )
+                                ) {
+                                    navController.popBackStack()
+                                }
                             }
                         }
 

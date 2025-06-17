@@ -6,6 +6,7 @@ import io.ktor.client.request.get
 
 interface MealService {
     suspend fun getMeal(): List<MealDto>
+    //suspend fun removeMeal(id: Int):
 }
 
 class MealServiceImpl(private val client: HttpClient) : MealService {

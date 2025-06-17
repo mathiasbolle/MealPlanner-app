@@ -47,7 +47,7 @@ fun IngredientScreen(
                 Box(modifier = Modifier
                     .fillMaxSize()
                     .padding(top = 50.dp)) {
-                    MealList(mealList = state.ingredientStatus.list)
+                    MealList(mealList = state.ingredientStatus.list) {}
 
                 }
             }

@@ -2,10 +2,5 @@ package be.mbolle.mealplanner.data.dto
 
 import kotlinx.serialization.Serializable
 
-
 @Serializable
-data class MealMenuDto(
-    val id: Int,
-    val name: String,
-    val kind: String,
-)
+object DateSwitchDto

@@ -53,6 +53,21 @@ class MenuViewModel(private val mealRepository: MealRepository) : ViewModel() {
         }
     }
 
+    fun deleteMenu() {
+        viewModelScope.launch {
+            if (menuState.mealDetails is MenuStatus.Succeed) {
+                (menuState.mealDetails as MenuStatus.Succeed).let {
+                    if (it.selectedMenu != null) {
+                        mealRepository.deleteMenu(
+                            it.selectedMenu.id
+                        )
+                    }
+                }
+            }
+        }
+        getMenu()
+    }
+
     init {
         getMenu()
     }

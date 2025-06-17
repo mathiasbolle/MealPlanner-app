@@ -33,7 +33,7 @@ android {
         buildConfigField(
             type = "String",
             name = "BUILD_SERVICE",
-            value = "\"http://192.168.0.206:8000/\""
+            value = "\"http://172.18.126.131:8000/\""
         )
     }
 

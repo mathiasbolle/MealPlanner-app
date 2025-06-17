@@ -3,9 +3,8 @@
 package be.mbolle.mealplanner.ui.composables.menu
 
 import android.util.Log
-import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -39,44 +38,81 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun MenuListItem(
-    menu: Menu,
-    onMealAction: (meal: Menu) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    menu: Menu?,
+    highlightToday: Boolean = true,
+    onMealAction: ((meal: Menu) -> Unit)? = null,
 ) {
-    val backgroundColor =
+
+    if (menu != null) {
         if (menu.date.isToday()) MaterialTheme.colorScheme.tertiaryContainer
         else MaterialTheme.colorScheme.primaryContainer
 
-    // should be derived from a viewmodel, this is presentation logic
-    val fontWeight =
-        if (menu.date.isToday()) FontWeight.Bold
-        else FontWeight.Normal
+        // should be derived from a viewmodel, this is presentation logic
+        val fontWeight =
+            if (menu.date.isToday() && highlightToday) FontWeight.Bold
+            else FontWeight.Normal
 
-    MealPlannerList(
-        modifier = modifier.background(backgroundColor),
-        onClickOptions = { onMealAction(menu) }) {
-        Row {
-            Column(
-                modifier = Modifier.weight(0.25f),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                DateIcon(
-                    date = menu.date,
-                    modifier = Modifier.padding(5.dp)
-                )
+
+        MealPlannerList(
+            isToday = menu.date.isToday() && highlightToday,
+            modifier = modifier,
+            onClickOptions = if (onMealAction == null) {
+                null
+            } else {
+                {
+                    onMealAction(menu)
+                }
             }
-            Column(
-                modifier = Modifier
-                    .weight(0.75f)
-                    .fillMaxHeight(),
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    menu.meal,
-                    fontWeight = fontWeight,
-                    fontSize = 18.sp,
-                    textAlign = TextAlign.Start
-                )
+        ) {
+            Row {
+                Column(
+                    modifier = Modifier.weight(0.25f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    DateIcon(
+                        date = menu.date,
+                        modifier = Modifier.padding(5.dp)
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .weight(0.75f)
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        menu.meal,
+                        fontWeight = fontWeight,
+                        fontSize = 18.sp,
+                        textAlign = TextAlign.Start
+                    )
+                }
+            }
+        }
+    } else {
+        MealPlannerList(
+            modifier = modifier,
+            onClickOptions = null
+        ) {
+            Row {
+                Column(
+                    modifier = Modifier.weight(0.25f),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    DateIcon(
+                        date = null,
+                        modifier = Modifier.padding(5.dp)
+                    )
+                }
+                Column(
+                    modifier = Modifier
+                        .weight(0.75f)
+                        .fillMaxHeight(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+                }
             }
         }
     }
@@ -87,7 +123,8 @@ fun MenuList(
     modifier: Modifier = Modifier,
     mealsState: Collection<List<Menu>>,
     scrollIndex: Int = 0,
-    onMealAction: (meal: Menu) -> Unit
+    onMealAction: ((meal: Menu) -> Unit)? = null,
+    onMenuAction: ((meal: Menu) -> Unit)? = null,
 ) {
     when (mealsState) {
         else -> {
@@ -107,18 +144,28 @@ fun MenuList(
                     Log.d("MealPlannerApp", mealsPerWeek.toString())
                     items(mealsPerWeek) { meal ->
                         if (meal.date.isToday()) {
-                            Box(modifier = Modifier.padding(bottom = 22.dp)) {
-                                MenuListItem(
-                                    menu = meal,
-                                    onMealAction = onMealAction,
-                                    modifier = modifier.padding(vertical = 10.dp),
-                                )
-                            }
+                            MenuListItem(
+                                menu = meal,
+                                onMealAction = onMealAction,
+                                modifier = modifier
+                                    .clickable(enabled = onMenuAction != null) {
+                                        onMenuAction?.invoke(
+                                            meal
+                                        )
+                                    }
+                                    .padding(vertical = 10.dp),
+                            )
                         } else {
                             MenuListItem(
                                 menu = meal,
                                 onMealAction = onMealAction,
-                                modifier = modifier.padding(vertical = 10.dp)
+                                modifier = modifier
+                                    .clickable(enabled = onMenuAction != null) {
+                                        onMenuAction?.invoke(
+                                            meal
+                                        )
+                                    }
+                                    .padding(vertical = 10.dp),
                             )
 
                             if (meal == mealsPerWeek.last()) {
