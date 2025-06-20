@@ -36,8 +36,9 @@ import be.mbolle.mealplanner.ui.composables.Option
 import be.mbolle.mealplanner.ui.composables.menu.MenuList
 
 @Composable
-fun MenuContent(modifier: Modifier = Modifier, onMenuClick: (menu: Menu) -> Unit) {
-    val viewModel: MenuViewModel = viewModel(factory = MenuViewModel.Companion.Factory)
+fun MenuContent(modifier: Modifier = Modifier,
+                viewModel: MenuViewModel,
+                onMenuClick: (menu: Menu) -> Unit) {
     val state = viewModel.menuState
 
     val thisWeek = stringResource(R.string.this_week_btn)
@@ -101,10 +102,10 @@ fun MenuContent(modifier: Modifier = Modifier, onMenuClick: (menu: Menu) -> Unit
                             onDismissRequest = { isModalVisible = false },
                             options = listOf(
                                 Option(
-                                    "Replace",
+                                    stringResource(R.string.switch_txt),
                                     { onMenuClick(state.mealDetails.selectedMenu!!) }),
-                                Option("Remove", { isAlertBoxVisible = true }),
-                                Option("Restrict", {})
+                                Option(stringResource(R.string.remove_txt), { isAlertBoxVisible = true }),
+                                Option(stringResource(R.string.restrict_txt), {})
                             ),
                             isVisible = isModalVisible
                         )

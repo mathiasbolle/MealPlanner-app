@@ -31,9 +31,9 @@ import be.mbolle.mealplanner.ui.composables.Option
 import be.mbolle.mealplanner.ui.composables.menu.MealList
 
 @Composable
-fun MealContent(modifier: Modifier = Modifier) {
-    val viewmodel: RecipeViewModel = viewModel(factory = RecipeViewModel.Factory)
-    val state = viewmodel.recipeState
+fun MealContent(modifier: Modifier = Modifier,
+                viewModel: RecipeViewModel) {
+    val state = viewModel.recipeState
 
     Column(modifier = modifier) {
         DateButtons(
@@ -68,22 +68,22 @@ fun MealContent(modifier: Modifier = Modifier) {
 
                 Box(modifier = Modifier.fillMaxSize().padding(top = 50.dp)) {
                     MealList(mealList = state.recipeStatus.list) { meal ->
-                        viewmodel.choseMeal(meal)
+                        viewModel.choseMeal(meal)
                         isModalVisible = true
                     }
 
                     AddRecipe(modifier = Modifier.align(Alignment.BottomEnd)) {
                         // on click
-                        viewmodel.openDialog()
+                        viewModel.openDialog()
                     }
                     CreateMealDialog(
                         openDialog = state.mealCreation.openDialog,
-                        setOpenDialog = { viewmodel.closeDialog() },
-                        onCancel = { viewmodel.closeDialog() },
+                        setOpenDialog = { viewModel.closeDialog() },
+                        onCancel = { viewModel.closeDialog() },
                         name = state.mealCreation.name,
-                        setName = { name -> viewmodel.setName(name)},
+                        setName = { name -> viewModel.setName(name)},
                         onConfirm = {
-                            viewmodel.createRecipe()
+                            viewModel.createRecipe()
                         })
 
                     EditMealPlannerModal(
@@ -123,5 +123,5 @@ fun AddRecipe(modifier: Modifier = Modifier, onClick: () -> Unit) {
 @Preview
 @Composable
 fun MealContentPreview() {
-    MealContent()
+    //MealContent()
 }

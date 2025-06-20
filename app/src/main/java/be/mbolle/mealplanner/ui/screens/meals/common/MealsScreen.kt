@@ -1,26 +1,9 @@
 package be.mbolle.mealplanner.ui.screens.meals.common
 
-import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import be.mbolle.mealplanner.ui.nav.Destination
-import be.mbolle.mealplanner.ui.nav.RecipeAppBar
-import be.mbolle.mealplanner.ui.screens.meals.menu.MenuStatus
-import be.mbolle.mealplanner.ui.screens.meals.menu.MenuSubScreen
-import be.mbolle.mealplanner.ui.screens.meals.menu.MenuViewModel
-import be.mbolle.mealplanner.ui.screens.meals.menu.replace.MenuItemReplace
-import be.mbolle.mealplanner.ui.screens.meals.recipe.RecipeSubScreen
 
 @Composable
 fun MealsScreen(

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -28,21 +29,21 @@ import be.mbolle.mealplanner.ui.composables.menu.MenuList
 import be.mbolle.mealplanner.ui.composables.menu.MenuListItem
 
 @Composable
-fun MenuItemReplace(
+fun MenuItemSwitch(
     modifier: Modifier = Modifier,
     menuList: Collection<List<Menu>>,
     navigateBack: () -> Unit
 ) {
-    val replaceMenuViewModel: ReplaceMenuViewModel = viewModel(factory = ReplaceMenuViewModel.Factory)
-    val state = replaceMenuViewModel.replaceMenuState.value
+    val switchMenuViewModel: SwitchMenuViewModel = viewModel(factory = SwitchMenuViewModel.Factory)
+    val state = switchMenuViewModel.switchMenuState.value
 
 
     Column(modifier = modifier) {
         //replace composable
         if (state != null) {
-            val state = replaceMenuViewModel.replaceMenuState.value
+            val state = switchMenuViewModel.switchMenuState.value
 
-            ReplaceChooser(state?.fromMenu!!, state.toMenu)
+            SwitchMenuChooser(state?.fromMenu!!, state.toMenu)
 
             Spacer(modifier = Modifier.padding(vertical = 30.dp))
             //menu composable should be integrated
@@ -53,7 +54,7 @@ fun MenuItemReplace(
                     modifier = Modifier.weight(8f),
                     onMenuAction = { meal ->
                         Log.d("ReplaceMenuItem", meal.toString())
-                        replaceMenuViewModel.replaceMenu(meal)
+                        switchMenuViewModel.replaceMenu(meal)
                     }
                 )
             }
@@ -67,7 +68,7 @@ fun MenuItemReplace(
                 }
                 Spacer(modifier = Modifier.padding(7.dp))
                 MealPlannerButton(text = "Confirm") {
-                    replaceMenuViewModel.confirm()
+                    switchMenuViewModel.confirm()
                     navigateBack()
                 }
             }
@@ -77,14 +78,13 @@ fun MenuItemReplace(
 
 
 @Composable
-fun ReplaceChooser(
+fun SwitchMenuChooser(
     initMenu: Menu,
     chosenMenu: Menu?,
 ) {
     Column {
-
         Text(
-            "Replace",
+            stringResource(R.string.switch_txt),
             modifier = Modifier.padding(top = 20.dp, bottom = 10.dp),
             fontSize = 25.sp,
             textAlign = TextAlign.Left,

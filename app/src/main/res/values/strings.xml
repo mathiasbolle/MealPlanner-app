@@ -6,4 +6,7 @@
     <string name="next_month_btn">Next Month</string>
     <string name="more_icon">more</string>
     <string name="warning_dialog">Warning Dialog</string>
+    <string name="switch_txt">Switch</string>
+    <string name="remove_txt">Remove</string>
+    <string name="restrict_txt">Restrict</string>
 </resources>

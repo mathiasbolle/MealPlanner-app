@@ -14,13 +14,13 @@ import be.mbolle.mealplanner.model.MealRepository
 import be.mbolle.mealplanner.model.Menu
 import kotlinx.coroutines.launch
 
-class ReplaceMenuViewModel(
+class SwitchMenuViewModel(
     //receive this with parameter of
     private val savedStateHandle: SavedStateHandle,
     private val mealRepository: MealRepository,
 ) : ViewModel() {
 
-    var replaceMenuState: MutableState<ReplaceMenuState?> =
+    var switchMenuState: MutableState<SwitchMenuState?> =
         mutableStateOf(
             null
         )
@@ -37,13 +37,13 @@ class ReplaceMenuViewModel(
             Log.d("ReplaceMenuViewModel", menuId.toString())
 
             val initMeal = mealRepository.getMenuById(menuId)
-            replaceMenuState.value = ReplaceMenuState(fromMenu = initMeal, toMenu = null)
+            switchMenuState.value = SwitchMenuState(fromMenu = initMeal, toMenu = null)
         }
-        Log.d("ReplaceMenuViewModel", replaceMenuState.value.toString())
+        Log.d("ReplaceMenuViewModel", switchMenuState.value.toString())
     }
 
     fun replaceMenu(menu: Menu) {
-        replaceMenuState.value = replaceMenuState.value?.copy(
+        switchMenuState.value = switchMenuState.value?.copy(
             toMenu = menu
         )
     }
@@ -51,9 +51,9 @@ class ReplaceMenuViewModel(
 
     fun confirm() {
         viewModelScope.launch {
-            if (replaceMenuState.value != null) {
-                val id: Int = replaceMenuState.value?.toMenu?.id ?: 0
-                val menu: Menu = replaceMenuState.value?.fromMenu!!
+            if (switchMenuState.value != null) {
+                val id: Int = switchMenuState.value?.toMenu?.id ?: 0
+                val menu: Menu = switchMenuState.value?.fromMenu!!
                 mealRepository.switchMenu(
                     id,
                     menu
@@ -69,7 +69,7 @@ class ReplaceMenuViewModel(
                 modelClass: Class<T>,
                 extras: CreationExtras
             ): T {
-                return ReplaceMenuViewModel(
+                return SwitchMenuViewModel(
                     savedStateHandle = extras.createSavedStateHandle(),
                     mealRepository = MainApplication.container.remoteMealRepository
                 ) as T

@@ -16,6 +16,7 @@ fun RecipeSubScreen(
     changeSection: (mealSection: MealSections) -> Unit,
     activeSection: MealSections,
     navController: NavHostController,
+    viewModel: RecipeViewModel,
 ) {
     SubScreenBuilder(
         modifier = modifier,
@@ -26,6 +27,7 @@ fun RecipeSubScreen(
     ) { navController, modifier ->
 
         MealContent(
+            viewModel = viewModel,
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(20.dp),

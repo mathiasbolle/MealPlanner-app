@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import be.mbolle.mealplanner.ui.nav.Destination
 import be.mbolle.mealplanner.ui.nav.ReplaceMenu
@@ -17,6 +18,8 @@ fun MenuSubScreen(
     innerPadding: PaddingValues = PaddingValues(),
     changeSection: (mealSection: MealSections) -> Unit,
     activeSection: MealSections,
+    viewModel: MenuViewModel,
+
     navController: NavHostController,
 ) {
     SubScreenBuilder(
@@ -27,6 +30,7 @@ fun MenuSubScreen(
         navController = navController,
     ) { navController, modifier ->
         MenuContent(
+            viewModel= viewModel,
             modifier =
                 Modifier
                     .padding(innerPadding)

@@ -14,10 +14,15 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavBackStackEntry
+import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,13 +35,15 @@ import be.mbolle.mealplanner.ui.nav.Destination
 import be.mbolle.mealplanner.ui.nav.RecipeAppBar
 import be.mbolle.mealplanner.ui.nav.RecipeBottomBar
 import be.mbolle.mealplanner.ui.screens.ingredients.IngredientScreen
+import be.mbolle.mealplanner.ui.screens.ingredients.IngredientViewModel
 import be.mbolle.mealplanner.ui.screens.meals.common.MealSections
 import be.mbolle.mealplanner.ui.screens.meals.common.MealViewModel
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuStatus
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuSubScreen
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuViewModel
-import be.mbolle.mealplanner.ui.screens.meals.menu.replace.MenuItemReplace
+import be.mbolle.mealplanner.ui.screens.meals.menu.replace.MenuItemSwitch
 import be.mbolle.mealplanner.ui.screens.meals.recipe.RecipeSubScreen
+import be.mbolle.mealplanner.ui.screens.meals.recipe.RecipeViewModel
 import be.mbolle.mealplanner.ui.theme.MealPlannerTheme
 
 @Composable
@@ -56,17 +63,10 @@ fun MealPlannerApp(modifier: Modifier = Modifier) {
         containerColor = MaterialTheme.colorScheme.background,
         bottomBar = { RecipeBottomBar(navHostController = navController) }
     ) { innerPadding ->
-        //MealsScreen(innerPadding = innerPadding)
-        val viewModel: MealViewModel = viewModel()
-        MealPlannerNavHost(navController = navController, viewModel = viewModel, innerPadding = innerPadding) { navigateTo ->
-            RecipeAppBar(
-                menuState = viewModel.mealState.activeSection,
-                changeSection = { mealSection -> viewModel.changeMealSection(mealSection) },
-                navigateTo = { mealSection -> navigateTo(mealSection) },
-                modifier = modifier
-                    .fillMaxWidth()
-            )
-        }
+        MealPlannerNavHost(
+            navController = navController,
+            innerPadding = innerPadding
+        )
     }
 }
 
@@ -76,19 +76,24 @@ fun MealPlannerNavHost(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     innerPadding: PaddingValues,
-    viewModel: MealViewModel,
-    recipeAppBar: @Composable (navigateTo: (MealSections) -> Unit) -> Unit
 ) {
-
     NavHost(
         navController = navController,
         modifier = modifier,
         startDestination = Destination.Meals
     ) {
         navigation<Destination.Meals>(startDestination = Destination.Meals.MenuSub) {
+
             composable<Destination.Meals.MenuSub> {
+                val menuViewModel: MenuViewModel = it.sharedViewModel(
+                    navController,
+                    MenuViewModel.Companion.Factory
+                )
+                val viewModel: MealViewModel =
+                    it.sharedViewModel(navController)
 
                 MenuSubScreen(
+                    viewModel = menuViewModel,
                     innerPadding = innerPadding,
                     changeSection = { mealSection -> viewModel.changeMealSection(mealSection) },
                     navController = navController,
@@ -97,7 +102,15 @@ fun MealPlannerNavHost(
                 BackHandler(true) { }
             }
             composable<Destination.Meals.MealSub> {
+                val recipeViewModel: RecipeViewModel = it.sharedViewModel(
+                    navController,
+                    RecipeViewModel.Factory
+                )
+                val viewModel: MealViewModel =
+                    it.sharedViewModel(navController)
+
                 RecipeSubScreen(
+                    viewModel = recipeViewModel,
                     innerPadding = innerPadding,
                     changeSection = { mealSection -> viewModel.changeMealSection(mealSection) },
                     navController = navController,
@@ -106,9 +119,12 @@ fun MealPlannerNavHost(
                 BackHandler(true) { }
             }
             composable<Destination.Meals.ReplaceMenu> {
+                val viewModel: MealViewModel =
+                    it.sharedViewModel(navController)
 
-                val viewModel: MenuViewModel = viewModel(factory = MenuViewModel.Companion.Factory)
-                val state = viewModel.menuState
+                val menuViewModel: MenuViewModel =
+                    it.sharedViewModel(navController, MenuViewModel.Companion.Factory)
+                val state = menuViewModel.menuState
 
                 val args = it.toRoute<Destination.Meals.ReplaceMenu>()
                 val menu: Int? = it.savedStateHandle.get<Int>("menu")
@@ -118,20 +134,22 @@ fun MealPlannerNavHost(
                 )
 
                 Column {
-                    recipeAppBar { mealSection ->
-                        navController.navigateTo(mealSection)
-                    }
+                    RecipeAppBar(
+                        menuState = viewModel.mealState.activeSection,
+                        changeSection = { mealSection -> viewModel.changeMealSection(mealSection) },
+                        navigateTo = { mealSection -> navController.navigateTo(mealSection) },
+                        modifier = modifier
+                            .fillMaxWidth()
+                    )
                     when (state.mealDetails) {
                         is MenuStatus.Succeed -> {
-                            state.mealDetails.let { details ->
-                                MenuItemReplace(
-                                    modifier = Modifier
-                                        .padding(innerPadding)
-                                        .padding(20.dp),
-                                    menuList = details.list
-                                ) {
-                                    navController.popBackStack()
-                                }
+                            MenuItemSwitch(
+                                modifier = Modifier
+                                    .padding(innerPadding)
+                                    .padding(20.dp),
+                                menuList = state.mealDetails.list
+                            ) {
+                                navController.popBackStack()
                             }
                         }
 
@@ -149,7 +167,13 @@ fun MealPlannerNavHost(
 
         navigation<Destination.Ingredients>(startDestination = Destination.Ingredients.IngredientList) {
             composable<Destination.Ingredients.IngredientList> {
-                IngredientScreen(modifier = Modifier.padding(all = 20.dp))
+                val ingredientViewModel: IngredientViewModel = it.sharedViewModel(
+                    navController,
+                    IngredientViewModel.Companion.Factory
+                )
+                IngredientScreen(
+                    viewModel = ingredientViewModel,
+                    modifier = Modifier.padding(all = 20.dp))
 
             }
         }
@@ -161,6 +185,20 @@ fun NavHostController.navigateTo(mealSections: MealSections) {
         MealSections.MENU -> this.navigate(Destination.Meals.MenuSub) // MenuSub
         MealSections.FRIDGE -> this.navigate(Destination.Meals.MealSub) // MealSub
     }
+}
+
+
+@Composable
+inline fun <reified T : ViewModel> NavBackStackEntry.sharedViewModel(
+    navController: NavController,
+    factory: ViewModelProvider.Factory? = null
+): T {
+    val navGraphRoute = destination.parent?.route ?: return viewModel()
+    val parentEntry = remember(this) {
+        navController.getBackStackEntry(navGraphRoute)
+    }
+
+    return viewModel(parentEntry, factory = factory)
 }
 
 

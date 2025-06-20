@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import be.mbolle.mealplanner.ui.composables.DateButtonsLazyRow
 import be.mbolle.mealplanner.ui.composables.MealPlannerButton
 import be.mbolle.mealplanner.ui.composables.menu.MealList
@@ -17,10 +16,10 @@ import java.util.Locale
 
 @Composable
 fun IngredientScreen(
+    viewModel: IngredientViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val viewmodel: IngredientViewModel = viewModel(factory = IngredientViewModel.Factory)
-    val state = viewmodel.ingredientState
+    val state = viewModel.ingredientState
 
     Column(modifier = modifier) {
         when(state.ingredientStatus) {

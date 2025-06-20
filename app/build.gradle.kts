@@ -33,7 +33,7 @@ android {
         buildConfigField(
             type = "String",
             name = "BUILD_SERVICE",
-            value = "\"http://172.18.126.131:8000/\""
+            value = "\"http://192.168.0.206:8000/\""
         )
     }
 
@@ -87,7 +87,8 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     ksp("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
-
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0")
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

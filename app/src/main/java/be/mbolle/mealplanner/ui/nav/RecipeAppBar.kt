@@ -23,10 +23,12 @@ import be.mbolle.mealplanner.ui.screens.meals.common.MealSections
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun RecipeAppBar(modifier: Modifier = Modifier,
-                 menuState: MealSections,
-                 changeSection: (MealSections) -> Unit,
-                 navigateTo: (MealSections) -> Unit) {
+fun RecipeAppBar(
+    modifier: Modifier = Modifier,
+    menuState: MealSections,
+    changeSection: (MealSections) -> Unit,
+    navigateTo: (MealSections) -> Unit
+) {
     Box(
         modifier
             .background(
@@ -37,7 +39,9 @@ fun RecipeAppBar(modifier: Modifier = Modifier,
         Row(modifier = modifier) {
             MealSections.entries.forEachIndexed { index, destination ->
                 val customColor =
-                    if (index == menuState.ordinal) MaterialTheme.colorScheme.secondaryContainer else Color.Unspecified
+                    if (index == menuState.ordinal)
+                        MaterialTheme.colorScheme.secondaryContainer
+                    else Color.Unspecified
 
                 Box(
                     Modifier
@@ -59,7 +63,6 @@ fun RecipeAppBar(modifier: Modifier = Modifier,
                         modifier = Modifier
                             .padding(horizontal = 20.dp, vertical = 4.dp)
                             .requiredSize(24.dp)
-
                     )
                 }
                 if (index + 1 < MealSections.entries.size) {
