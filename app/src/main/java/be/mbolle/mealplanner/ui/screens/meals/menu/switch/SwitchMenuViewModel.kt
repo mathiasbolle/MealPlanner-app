@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.ui.screens.meals.menu.replace
+package be.mbolle.mealplanner.ui.screens.meals.menu.switch
 
 import android.util.Log
 import androidx.compose.runtime.MutableState

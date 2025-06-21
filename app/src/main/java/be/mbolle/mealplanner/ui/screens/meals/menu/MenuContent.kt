@@ -23,7 +23,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import be.mbolle.mealplanner.R
 import be.mbolle.mealplanner.model.Meal
 import be.mbolle.mealplanner.model.MealKinds
@@ -36,9 +35,12 @@ import be.mbolle.mealplanner.ui.composables.Option
 import be.mbolle.mealplanner.ui.composables.menu.MenuList
 
 @Composable
-fun MenuContent(modifier: Modifier = Modifier,
-                viewModel: MenuViewModel,
-                onMenuClick: (menu: Menu) -> Unit) {
+fun MenuContent(
+    modifier: Modifier = Modifier,
+    viewModel: MenuViewModel,
+    onReplaceMenuClick: (menu: Menu) -> Unit,
+    onSwitchMenuClick: (menu: Menu) -> Unit,
+) {
     val state = viewModel.menuState
 
     val thisWeek = stringResource(R.string.this_week_btn)
@@ -103,8 +105,13 @@ fun MenuContent(modifier: Modifier = Modifier,
                             options = listOf(
                                 Option(
                                     stringResource(R.string.switch_txt),
-                                    { onMenuClick(state.mealDetails.selectedMenu!!) }),
-                                Option(stringResource(R.string.remove_txt), { isAlertBoxVisible = true }),
+                                    { onSwitchMenuClick(state.mealDetails.selectedMenu!!) }),
+                                Option(
+                                    "Replace",
+                                    { onReplaceMenuClick(state.mealDetails.selectedMenu!!) }),
+                                Option(
+                                    stringResource(R.string.remove_txt),
+                                    { isAlertBoxVisible = true }),
                                 Option(stringResource(R.string.restrict_txt), {})
                             ),
                             isVisible = isModalVisible

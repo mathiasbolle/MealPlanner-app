@@ -1,4 +1,4 @@
-package be.mbolle.mealplanner.ui.screens.meals.menu.replace
+package be.mbolle.mealplanner.ui.screens.meals.menu.switch
 
 import be.mbolle.mealplanner.model.Menu
 

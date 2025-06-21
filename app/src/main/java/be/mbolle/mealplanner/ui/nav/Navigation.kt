@@ -16,6 +16,9 @@ sealed class Destination (
         object MealSub
 
         @Serializable
+        data class SwitchMenu(val menu: Int)
+
+        @Serializable
         data class ReplaceMenu(val menu: Int)
     }
     @Serializable

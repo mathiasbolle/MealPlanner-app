@@ -41,7 +41,7 @@ import be.mbolle.mealplanner.ui.screens.meals.common.MealViewModel
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuStatus
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuSubScreen
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuViewModel
-import be.mbolle.mealplanner.ui.screens.meals.menu.replace.MenuItemSwitch
+import be.mbolle.mealplanner.ui.screens.meals.menu.switch.MenuItemSwitch
 import be.mbolle.mealplanner.ui.screens.meals.recipe.RecipeSubScreen
 import be.mbolle.mealplanner.ui.screens.meals.recipe.RecipeViewModel
 import be.mbolle.mealplanner.ui.theme.MealPlannerTheme
@@ -118,7 +118,7 @@ fun MealPlannerNavHost(
                 )
                 BackHandler(true) { }
             }
-            composable<Destination.Meals.ReplaceMenu> {
+            composable<Destination.Meals.SwitchMenu> {
                 val viewModel: MealViewModel =
                     it.sharedViewModel(navController)
 
@@ -126,7 +126,7 @@ fun MealPlannerNavHost(
                     it.sharedViewModel(navController, MenuViewModel.Companion.Factory)
                 val state = menuViewModel.menuState
 
-                val args = it.toRoute<Destination.Meals.ReplaceMenu>()
+                val args = it.toRoute<Destination.Meals.SwitchMenu>()
                 val menu: Int? = it.savedStateHandle.get<Int>("menu")
 
                 Log.d(
@@ -162,6 +162,23 @@ fun MealPlannerNavHost(
                         }
                     }
                 }
+            }
+
+            composable<Destination.Meals.ReplaceMenu> {
+                val viewModel: MealViewModel =
+                    it.sharedViewModel(navController)
+
+                Column {
+                    RecipeAppBar(
+                        menuState = viewModel.mealState.activeSection,
+                        changeSection = { mealSection -> viewModel.changeMealSection(mealSection) },
+                        navigateTo = { mealSection -> navController.navigateTo(mealSection) },
+                        modifier = modifier
+                            .fillMaxWidth()
+                    )
+
+                }
+
             }
         }
 
