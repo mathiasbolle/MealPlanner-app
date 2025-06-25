@@ -9,7 +9,8 @@ import be.mbolle.mealplanner.data.local.room.entities.MenuWithMealMenus
 interface MealRepository {
     suspend fun getMenu(): List<Menu>
     suspend fun getMenuById(id: Int): Menu
-    suspend fun getFoodItem(): List<Meal>
+    suspend fun refreshFoodItems(): List<Meal>
+    suspend fun getLocalFoodItems(): List<Meal>
     suspend fun createIngredientFromMeal(meal: Meal)
     suspend fun deleteMenu(id: Int)
     suspend fun switchMenu(id: Int, menu: Menu)

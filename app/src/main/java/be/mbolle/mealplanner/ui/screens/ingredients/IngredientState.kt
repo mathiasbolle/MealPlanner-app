@@ -17,7 +17,8 @@ data class IngredientCreation(
 sealed interface IngredientStatus {
     data class Succeed(
         val list: List<Meal> = emptyList(),
-        val ingredientCategories: List<MealKinds> = emptyList()
+        val ingredientCategories: List<MealKinds> = emptyList(),
+        val selectedCategory: MealKinds? = null,
     ) : IngredientStatus
 
     data class Error(val message: String) : IngredientStatus

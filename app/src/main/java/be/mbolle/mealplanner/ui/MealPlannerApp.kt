@@ -41,6 +41,7 @@ import be.mbolle.mealplanner.ui.screens.meals.common.MealViewModel
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuStatus
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuSubScreen
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuViewModel
+import be.mbolle.mealplanner.ui.screens.meals.menu.replace.MenuItemReplace
 import be.mbolle.mealplanner.ui.screens.meals.menu.switch.MenuItemSwitch
 import be.mbolle.mealplanner.ui.screens.meals.recipe.RecipeSubScreen
 import be.mbolle.mealplanner.ui.screens.meals.recipe.RecipeViewModel
@@ -177,6 +178,7 @@ fun MealPlannerNavHost(
                             .fillMaxWidth()
                     )
 
+                    MenuItemReplace(modifier = modifier.padding(innerPadding).padding(20.dp)) {  }
                 }
 
             }

@@ -22,30 +22,45 @@ fun IngredientScreen(
     val state = viewModel.ingredientState
 
     Column(modifier = modifier) {
-        when(state.ingredientStatus) {
+        when (state.ingredientStatus) {
 
             is IngredientStatus.Error -> {
                 // what to do if it is restored from local database?
             }
+
             IngredientStatus.Loading -> {
 
             }
+
             is IngredientStatus.Succeed -> {
 
                 val mealKindComposable: List<@Composable () -> Unit> =
-                    (state.ingredientStatus.ingredientCategories.map { x -> { MealPlannerButton(false,
-                        x.toString().lowercase(Locale.ROOT)
-                    ) {} } })
+                    (state.ingredientStatus.ingredientCategories.map { mealKind ->
+                        {
+                            MealPlannerButton(
+                                state.ingredientStatus.selectedCategory == mealKind,
+                                mealKind.toString().lowercase(Locale.ROOT)
+                            ) {
+                                Log.d("IngredientScreen", state.toString())
+
+                                if (state.ingredientStatus.selectedCategory == null || state.ingredientStatus.selectedCategory != mealKind)
+                                    viewModel.selectIngredientCategory(mealKind)
+                                else if (state.ingredientStatus.selectedCategory == mealKind)
+                                    viewModel.unselectIngredientCategory()
+                            }
+                        }
+                    })
 
                 DateButtonsLazyRow(
                     modifier = Modifier.fillMaxWidth(),
                     buttons = mealKindComposable
                 )
 
-                Log.d("IngredientScreen", "test")
-                Box(modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 50.dp)) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 50.dp)
+                ) {
                     MealList(mealList = state.ingredientStatus.list) {}
 
                 }

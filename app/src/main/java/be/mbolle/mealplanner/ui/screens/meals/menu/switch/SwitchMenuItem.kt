@@ -76,7 +76,6 @@ fun MenuItemSwitch(
     }
 }
 
-
 @Composable
 fun SwitchMenuChooser(
     initMenu: Menu,

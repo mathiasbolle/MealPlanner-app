@@ -30,7 +30,6 @@ class RemoteMealRepository(
         val menuMealMenuDao = mealPlannerDatabase.getMenuWithMealMenuDao()
         val mealMenuDao = mealPlannerDatabase.getMealMenuDao()
 
-
         val cachedMenus = menuMealMenuDao.getMenuWithMealMenus().toMenuModelFromDb()
 
         try {
@@ -67,7 +66,7 @@ class RemoteMealRepository(
         return menuMealMenuDao.getMenuWithMealMenuById(id).toModel()
     }
 
-    override suspend fun getFoodItem(): List<Meal> {
+    override suspend fun refreshFoodItems(): List<Meal> {
         val mealMenuDao = mealPlannerDatabase.getMealMenuDao()
         return try {
             val meals = mealService.getMeal()
@@ -86,6 +85,12 @@ class RemoteMealRepository(
         } catch (e: Exception) {
             mealMenuDao.getAll().toMealModelFromDb()
         }
+    }
+
+
+    override suspend fun getLocalFoodItems(): List<Meal> {
+        val mealMenuDao = mealPlannerDatabase.getMealMenuDao()
+        return mealMenuDao.getAll().toMealModelFromDb()
     }
 
     override suspend fun createIngredientFromMeal(meal: Meal) {
