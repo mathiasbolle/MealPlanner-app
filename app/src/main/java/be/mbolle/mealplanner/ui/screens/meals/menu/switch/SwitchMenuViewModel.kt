@@ -34,10 +34,14 @@ class SwitchMenuViewModel(
     private fun initMenu() {
         viewModelScope.launch {
             val menuId: Int = savedStateHandle["menu"] ?: 0
-            Log.d("ReplaceMenuViewModel", menuId.toString())
 
-            val initMeal = mealRepository.getMenuById(menuId)
-            switchMenuState.value = SwitchMenuState(fromMenu = initMeal, toMenu = null)
+            if (menuId != 0) {
+                Log.d("ReplaceMenuViewModel - test", menuId.toString())
+
+                val initMeal = mealRepository.getMenuById(menuId)
+                switchMenuState.value = SwitchMenuState(fromMenu = initMeal, toMenu = null)
+
+            }
         }
         Log.d("ReplaceMenuViewModel", switchMenuState.value.toString())
     }

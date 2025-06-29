@@ -42,6 +42,8 @@ import be.mbolle.mealplanner.ui.screens.meals.menu.MenuStatus
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuSubScreen
 import be.mbolle.mealplanner.ui.screens.meals.menu.MenuViewModel
 import be.mbolle.mealplanner.ui.screens.meals.menu.replace.MenuItemReplace
+import be.mbolle.mealplanner.ui.screens.meals.menu.replace.ReplaceMenuCategory
+import be.mbolle.mealplanner.ui.screens.meals.menu.replace.ReplaceMenuViewModel
 import be.mbolle.mealplanner.ui.screens.meals.menu.switch.MenuItemSwitch
 import be.mbolle.mealplanner.ui.screens.meals.recipe.RecipeSubScreen
 import be.mbolle.mealplanner.ui.screens.meals.recipe.RecipeViewModel
@@ -127,12 +129,12 @@ fun MealPlannerNavHost(
                     it.sharedViewModel(navController, MenuViewModel.Companion.Factory)
                 val state = menuViewModel.menuState
 
-                val args = it.toRoute<Destination.Meals.SwitchMenu>()
-                val menu: Int? = it.savedStateHandle.get<Int>("menu")
+//                val args = it.toRoute<Destination.Meals.SwitchMenu>()
+//                val menu: Int? = it.savedStateHandle.get<Int>("menu")
 
-                Log.d(
-                    "MealPlannerApp", menu.toString()
-                )
+//                Log.d(
+//                    "MealPlannerApp", menu.toString()
+//                )
 
                 Column {
                     RecipeAppBar(
@@ -169,6 +171,17 @@ fun MealPlannerNavHost(
                 val viewModel: MealViewModel =
                     it.sharedViewModel(navController)
 
+                val viewmodel: ReplaceMenuViewModel = it.sharedViewModel(
+                    navController,
+                    ReplaceMenuViewModel.Factory
+                )
+
+                val args = it.toRoute<Destination.Meals.ReplaceMenu>()
+                val menu: Int? = it.savedStateHandle.get<Int>("menu")
+                Log.d(
+                    "MealPlannerApp - menu", menu.toString()
+                )
+
                 Column {
                     RecipeAppBar(
                         menuState = viewModel.mealState.activeSection,
@@ -178,9 +191,23 @@ fun MealPlannerNavHost(
                             .fillMaxWidth()
                     )
 
-                    MenuItemReplace(modifier = modifier.padding(innerPadding).padding(20.dp)) {  }
-                }
+                    MenuItemReplace(
+                        modifier = modifier
+                            .padding(innerPadding)
+                            .padding(20.dp),
 
+                        navigateReplaceMenuCategory = { replaceMenuCategory ->
+                            when (replaceMenuCategory) {
+                                ReplaceMenuCategory.CUSTOM -> navController
+                                    .navigate(Destination.Meals.ReplaceMenu.CustomReplaceMenu)
+                                ReplaceMenuCategory.PREDEFINED -> navController
+                                    .navigate(Destination.Meals.ReplaceMenu.PredefinedReplaceMenu)
+                            }
+                        }
+                    ) {
+                        navController.popBackStack()
+                    }
+                }
             }
         }
 
@@ -192,8 +219,8 @@ fun MealPlannerNavHost(
                 )
                 IngredientScreen(
                     viewModel = ingredientViewModel,
-                    modifier = Modifier.padding(all = 20.dp))
-
+                    modifier = Modifier.padding(all = 20.dp)
+                )
             }
         }
     }

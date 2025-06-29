@@ -1,5 +1,6 @@
 package be.mbolle.mealplanner.ui.screens.meals.menu
 
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -34,10 +35,12 @@ fun MenuSubScreen(
                     .padding(innerPadding)
                     .padding(start = 20.dp, end = 20.dp, top = 20.dp),
             onReplaceMenuClick = { menu ->
+                Log.d("MenuSubScreen - replace", menu.id.toString())
 
                 navController.navigate(Destination.Meals.ReplaceMenu(menu.id))
             },
             onSwitchMenuClick = { menu ->
+                Log.d("MenuSubScreen", menu.id.toString())
 
                 navController.navigate(Destination.Meals.SwitchMenu(menu.id))
             }

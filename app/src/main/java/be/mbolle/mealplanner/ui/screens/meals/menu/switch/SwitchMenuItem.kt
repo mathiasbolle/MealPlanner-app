@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -32,7 +33,7 @@ import be.mbolle.mealplanner.ui.composables.menu.MenuListItem
 fun MenuItemSwitch(
     modifier: Modifier = Modifier,
     menuList: Collection<List<Menu>>,
-    navigateBack: () -> Unit
+    navigateBack: () -> Unit,
 ) {
     val switchMenuViewModel: SwitchMenuViewModel = viewModel(factory = SwitchMenuViewModel.Factory)
     val state = switchMenuViewModel.switchMenuState.value

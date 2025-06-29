@@ -63,6 +63,7 @@ class RemoteMealRepository(
     }
 
     override suspend fun getMenuById(id: Int): Menu {
+        Log.d("RemoteMealRepositoy", id.toString())
         return menuMealMenuDao.getMenuWithMealMenuById(id).toModel()
     }
 

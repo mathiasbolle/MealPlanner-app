@@ -1,7 +1,11 @@
 package be.mbolle.mealplanner.ui.screens.meals.menu.replace
 
-import android.util.Log
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
@@ -16,15 +20,15 @@ import be.mbolle.mealplanner.model.Menu
 import be.mbolle.mealplanner.ui.composables.DateButtonsLazyRow
 import be.mbolle.mealplanner.ui.composables.MealPlannerButton
 import be.mbolle.mealplanner.ui.composables.menu.MenuListItem
-import java.util.Locale
+import be.mbolle.mealplanner.ui.screens.meals.menu.replace.subscreen.ReplaceMenuSubScreen
 
 @Composable
 fun MenuItemReplace(
     modifier: Modifier = Modifier,
-
+    navigateReplaceMenuCategory: (replaceMenuCategory: ReplaceMenuCategory) -> Unit,
     navigateBack: () -> Unit,
 ) {
-    val viewmodel: ReplaceMenuViewModel = viewModel()
+    val viewmodel = viewModel<ReplaceMenuViewModel>(factory = ReplaceMenuViewModel.Factory)
     val state = viewmodel.state
 
     Column(modifier = modifier) {
@@ -39,15 +43,53 @@ fun MenuItemReplace(
                         category == state.selectedCategory,
                         category.toString()
                     ) {
+                        viewmodel.changeReplaceCategory(category)
                     }
                 }
             })
 
 
-        DateButtonsLazyRow(
-            modifier = Modifier.fillMaxWidth(),
-            buttons = category
-        )
+        Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
+            DateButtonsLazyRow(
+                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
+                buttons = category
+            )
+
+
+            when (state.content) {
+                is ReplaceMenuResult.Error -> {
+
+                }
+
+                ReplaceMenuResult.Loading -> {
+
+                }
+
+                is ReplaceMenuResult.Succeed -> {
+                    ReplaceMenuSubScreen(
+                        replaceMenuFormat = state.content.replaceMenuFormat,
+                        replaceMenuCategory = state.selectedCategory,
+                        navigateReplaceMenuCategory = { navigateReplaceMenuCategory }
+                    )
+                }
+            }
+
+
+            Row(
+                horizontalArrangement = Arrangement.End,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(vertical = 20.dp)
+            ) {
+                MealPlannerButton(text = "Cancel", isActive = false) {
+                    navigateBack()
+                }
+                Spacer(modifier = Modifier.padding(7.dp))
+                MealPlannerButton(text = "Confirm") {
+                    navigateBack()
+                }
+            }
+        }
 
     }
 }
