@@ -18,8 +18,21 @@ import be.mbolle.mealplanner.model.Meal
 import be.mbolle.mealplanner.ui.composables.MealPlannerList
 
 @Composable
-fun MealListItem(meal: Meal, modifier: Modifier = Modifier, onClickOptions: (meal: Meal) -> Unit) {
-    MealPlannerList(modifier = modifier, onClickOptions = { onClickOptions(meal) }) {
+fun MealListItem(
+    meal: Meal,
+    modifier: Modifier = Modifier,
+    onClickOptions: ((meal: Meal) -> Unit)? = null
+) {
+    MealPlannerList(
+        modifier = modifier, onClickOptions =
+        if (onClickOptions == null) {
+            null
+        } else {
+            {
+                onClickOptions(meal)
+            }
+        }
+    ) {
         Row {
             Spacer(modifier = Modifier.weight(0.25f))
             Column(
@@ -39,13 +52,17 @@ fun MealListItem(meal: Meal, modifier: Modifier = Modifier, onClickOptions: (mea
 }
 
 @Composable
-fun MealList(modifier: Modifier = Modifier, mealList: List<Meal>, onClickOptions: (Meal) -> Unit) {
+fun MealList(
+    modifier: Modifier = Modifier,
+    mealList: List<Meal>,
+    onClickOptions: ((Meal) -> Unit)? = null,
+) {
     LazyColumn(modifier = modifier, verticalArrangement = Arrangement.spacedBy(10.dp)) {
         items(mealList) { meal ->
             MealListItem(
                 meal = meal,
                 modifier = modifier.padding(vertical = 10.dp),
-                onClickOptions = { onClickOptions(meal) }
+                onClickOptions = onClickOptions
             )
         }
     }

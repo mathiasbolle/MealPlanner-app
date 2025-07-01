@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -41,9 +40,9 @@ fun ReplaceMenuSubScreen(
             HorizontalPager(
                 state = pagerState,
             ) { page ->
-                MealList(mealList = customMenuFormat.customMap[page + 1] ?: emptyList()) { }
-
-
+                MealList(
+                    mealList = customMenuFormat.customMap[page + 1] ?: emptyList(),
+                ) // no option available
             }
 
             Log.d("ReplaceMenuSubScreen - test", pagerState.pageCount.toString())
@@ -56,7 +55,7 @@ fun ReplaceMenuSubScreen(
 
         ReplaceMenuCategory.PREDEFINED -> {
             val predefinedFormat = (replaceMenuFormat as ReplaceMenuFormat.Predefined)
-            MealList(mealList = predefinedFormat.list) { }
+            MealList(mealList = predefinedFormat.list)
         }
     }
 }

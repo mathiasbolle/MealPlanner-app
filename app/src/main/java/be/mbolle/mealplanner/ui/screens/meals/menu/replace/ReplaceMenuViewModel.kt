@@ -1,6 +1,5 @@
 package be.mbolle.mealplanner.ui.screens.meals.menu.replace
 
-import android.R.attr.data
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,7 +11,6 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import be.mbolle.mealplanner.MainApplication
-import be.mbolle.mealplanner.model.Meal
 import be.mbolle.mealplanner.model.MealKinds
 import be.mbolle.mealplanner.model.MealRepository
 import be.mbolle.mealplanner.model.Menu
