@@ -1,15 +1,17 @@
 package be.mbolle.mealplanner.ui.screens.meals.menu.replace
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -17,8 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import be.mbolle.mealplanner.model.Menu
-import be.mbolle.mealplanner.ui.composables.DateButtonsLazyRow
-import be.mbolle.mealplanner.ui.composables.MealPlannerButton
+import be.mbolle.mealplanner.ui.composables.MealPlannerListLazy
 import be.mbolle.mealplanner.ui.composables.menu.MenuListItem
 import be.mbolle.mealplanner.ui.screens.meals.menu.replace.subscreen.ReplaceMenuSubScreen
 
@@ -36,26 +37,15 @@ fun MenuItemReplace(
             state.selectedCategory,
             state.menu
         )
-        val category: List<@Composable () -> Unit> =
-            (enumValues<ReplaceMenuCategory>().map { category ->
-                {
-                    MealPlannerButton(
-                        category == state.selectedCategory,
-                        category.toString()
-                    ) {
-                        viewmodel.changeReplaceCategory(category)
-                    }
-                }
-            })
-
-
         Column(modifier = Modifier.fillMaxHeight(), verticalArrangement = Arrangement.Center) {
-            DateButtonsLazyRow(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 20.dp),
-                buttons = category
-            )
-
-
+            MealPlannerListLazy<ReplaceMenuCategory>(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                values = enumValues<ReplaceMenuCategory>(),
+                isActiveValue = state.selectedCategory
+            ) { category ->
+                viewmodel.changeReplaceCategory(category)
+            }
             when (state.content) {
                 is ReplaceMenuResult.Error -> {
 
@@ -66,34 +56,23 @@ fun MenuItemReplace(
                 }
 
                 is ReplaceMenuResult.Succeed -> {
+                    var currentPageState by remember { mutableIntStateOf(-1) }
+                    Log.d("ReplaceMenuItem", currentPageState.toString())
+
+
                     ReplaceMenuSubScreen(
+                        unselectMealCategory = { meal -> viewmodel.unselectMealCategory(meal) },
+                        selectMealCategory = { meal -> viewmodel.selectMeatCategory(meal) },
+                        navigateBack = navigateBack,
                         replaceMenuFormat = state.content.replaceMenuFormat,
                         replaceMenuCategory = state.selectedCategory,
                         navigateReplaceMenuCategory = { navigateReplaceMenuCategory }
                     )
                 }
             }
-
-
-            Row(
-                horizontalArrangement = Arrangement.End,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = 20.dp)
-            ) {
-                MealPlannerButton(text = "Cancel", isActive = false) {
-                    navigateBack()
-                }
-                Spacer(modifier = Modifier.padding(7.dp))
-                MealPlannerButton(text = "Confirm") {
-                    navigateBack()
-                }
-            }
         }
-
     }
 }
-
 
 @Composable
 fun ReplaceMenuHeader(
@@ -108,7 +87,6 @@ fun ReplaceMenuHeader(
             textAlign = TextAlign.Left,
             fontWeight = FontWeight.Light
         )
-
         MenuListItem(
             menu = menu,
             modifier = Modifier.padding(10.dp),

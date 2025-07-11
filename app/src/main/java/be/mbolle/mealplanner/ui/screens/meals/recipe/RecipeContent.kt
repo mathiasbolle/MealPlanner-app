@@ -67,10 +67,10 @@ fun MealContent(modifier: Modifier = Modifier,
                 Log.d("RecipeContent", "it is called...")
 
                 Box(modifier = Modifier.fillMaxSize().padding(top = 50.dp)) {
-                    MealList(mealList = state.recipeStatus.list) { meal ->
+                    MealList(mealList = state.recipeStatus.list, onClickOptions = { meal ->
                         viewModel.choseMeal(meal)
                         isModalVisible = true
-                    }
+                    })
 
                     AddRecipe(modifier = Modifier.align(Alignment.BottomEnd)) {
                         // on click

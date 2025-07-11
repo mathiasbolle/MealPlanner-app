@@ -43,7 +43,8 @@ fun IngredientScreen(
                             ) {
                                 Log.d("IngredientScreen", state.toString())
 
-                                if (state.ingredientStatus.selectedCategory == null || state.ingredientStatus.selectedCategory != mealKind)
+                                if (state.ingredientStatus.selectedCategory == null ||
+                                    state.ingredientStatus.selectedCategory != mealKind)
                                     viewModel.selectIngredientCategory(mealKind)
                                 else if (state.ingredientStatus.selectedCategory == mealKind)
                                     viewModel.unselectIngredientCategory()
@@ -61,11 +62,10 @@ fun IngredientScreen(
                         .fillMaxSize()
                         .padding(top = 50.dp)
                 ) {
-                    MealList(mealList = state.ingredientStatus.list) {}
+                    MealList(mealList = state.ingredientStatus.list, onClickOptions = {})
 
                 }
             }
         }
-
     }
 }

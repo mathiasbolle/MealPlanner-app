@@ -11,8 +11,6 @@ data class ReplaceMenuState(
 
 sealed interface ReplaceMenuResult {
     data class Succeed(
-//        val list: List<Meal> = emptyList(),
-//        val mealCategory: List<MealKinds>
         val replaceMenuFormat: ReplaceMenuFormat
     ) : ReplaceMenuResult
 
@@ -24,9 +22,13 @@ sealed interface ReplaceMenuResult {
 sealed interface ReplaceMenuFormat {
     data class Predefined(
         val list: List<Meal> = emptyList(),
-    ): ReplaceMenuFormat
+        val selectedMeal: Meal? = null,
+    ) : ReplaceMenuFormat
 
     data class Custom(
-        val customMap: Map<Int, List<Meal>> = emptyMap()
-    ): ReplaceMenuFormat
+        val customMap: Map<Int, List<Meal>> = emptyMap(),
+        val selectedMeat: Meal? = null,
+        val selectedVegetables: Meal? = null,
+        val selectedPatatoes: Meal? = null
+    ) : ReplaceMenuFormat
 }

@@ -41,7 +41,7 @@ fun DateButtonsLazyRow(
     buttons: List<@Composable () -> Unit>
 ) {
     LazyRow(horizontalArrangement = Arrangement.Start, modifier = modifier) {
-        itemsIndexed (buttons) { index, value ->
+        itemsIndexed(buttons) { index, value ->
             value()
             if (index + 1 < buttons.size) {
                 Spacer(modifier = Modifier.width(10.dp))
@@ -87,5 +87,48 @@ fun MealPlannerButton(
 
     ) {
         Text(text)
+    }
+}
+
+@Composable
+fun <T : Enum<T>> MealPlannerList(
+    modifier: Modifier = Modifier,
+    values: Array<T>,
+    isActiveValue: T,
+    callback: (cbValue: T) -> Unit
+) {
+    values.map { value ->
+        val valueStr = value.toString()
+        MealPlannerButton(
+            modifier = modifier,
+            isActive = (value == isActiveValue), text = valueStr,
+            callback = {
+                callback(value)
+            }
+        )
+    }
+}
+
+@Composable
+fun <T : Enum<T>> MealPlannerListLazy(
+    modifier: Modifier = Modifier,
+    values: Array<T>,
+    isActiveValue: T,
+    callback: (cbValue: T) -> Unit
+
+) {
+    LazyRow(horizontalArrangement = Arrangement.Start, modifier = modifier) {
+        itemsIndexed(values) { index, value ->
+            MealPlannerButton(
+                modifier = modifier,
+                isActive = (value == isActiveValue), text = value.toString(),
+                callback = {
+                    callback(value)
+                }
+            )
+            if (index + 1 < values.size) {
+                Spacer(modifier = Modifier.width(10.dp))
+            }
+        }
     }
 }

@@ -11,7 +11,14 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import be.mbolle.mealplanner.MainApplication
+import be.mbolle.mealplanner.model.Meal
 import be.mbolle.mealplanner.model.MealKinds
+import be.mbolle.mealplanner.model.MealKinds.DISH
+import be.mbolle.mealplanner.model.MealKinds.MEAT
+import be.mbolle.mealplanner.model.MealKinds.OTHER
+import be.mbolle.mealplanner.model.MealKinds.PASTA_PATATO
+import be.mbolle.mealplanner.model.MealKinds.SAUCE
+import be.mbolle.mealplanner.model.MealKinds.VEGETABLES
 import be.mbolle.mealplanner.model.MealRepository
 import be.mbolle.mealplanner.model.Menu
 import be.mbolle.mealplanner.model.use_cases.GetIngredientsUseCase
@@ -46,6 +53,175 @@ class ReplaceMenuViewModel(
                 state = ReplaceMenuState(menu = Menu(initMeal.id, date = initMeal.date, meal = ""))
 
                 changeReplaceCategory(state.selectedCategory)
+            }
+        }
+    }
+
+    fun selectMeatCategory(meal: Meal) {
+        val succeededContent = state.content as ReplaceMenuResult.Succeed
+        val mealWithinState = getCustomContentWithMeal(meal)
+
+        state = state.copy(
+            content = succeededContent.copy(
+                replaceMenuFormat = mealWithinState
+            )
+        )
+
+        val replaceMenuResult =
+            ((state.content as ReplaceMenuResult.Succeed).replaceMenuFormat
+                    as ReplaceMenuFormat.Custom)
+
+        when (meal.mealKind) {
+            PASTA_PATATO -> {
+                adjustMenuWithMeal(replaceMenuResult.selectedPatatoes!!)
+            }
+
+            VEGETABLES -> {
+                adjustMenuWithMeal(replaceMenuResult.selectedVegetables!!)
+            }
+
+            MEAT -> {
+                adjustMenuWithMeal(replaceMenuResult.selectedMeat!!)
+            }
+
+            else -> {
+            }
+        }
+        Log.d("ReplaceMenuViewModel", meal.toString())
+        Log.d("ReplaceMenuViewModel", state.toString())
+    }
+
+    fun unselectMealCategory(meal: Meal) {
+        removeMenuWithMeal(meal)
+
+
+        val succeededContent = state.content as ReplaceMenuResult.Succeed
+        val customData = resetCustomContentFromMeal(meal)
+
+        state = state.copy(
+            content = succeededContent.copy(
+                replaceMenuFormat = customData
+            )
+        )
+
+    }
+
+    private fun adjustMenuWithMeal(meal: Meal) {
+        val meal =
+            (if (state.menu?.meal == "") meal.name else
+                state.menu?.meal.toString() + ", " + meal.name).toString()
+
+        state = state.copy(
+            menu = state.menu!!.copy(
+                id = state.menu?.id ?: -1,
+                meal = meal,
+                date = state.menu!!.date
+            )
+        )
+    }
+
+    private fun removeMenuWithMeal(meal: Meal) {
+        val mealState = state.menu?.meal
+        var newMealState: String? = ""
+        if (mealState?.contains(meal.name) == true) {
+            newMealState = mealState.replace(meal.name, "")
+        } else if (mealState?.contains("${meal.name},") == true) {
+            newMealState = mealState.replace("${meal.name},", "")
+        }
+        state = state.copy(
+            menu = state.menu!!.copy(
+                meal = newMealState!!
+            )
+        )
+    }
+
+    private fun getCustomContentWithMeal(meal: Meal): ReplaceMenuFormat {
+        val succeededContent = state.content as ReplaceMenuResult.Succeed
+        var customContent = succeededContent.replaceMenuFormat as ReplaceMenuFormat.Custom
+
+        return when (meal.mealKind) {
+            PASTA_PATATO -> {
+                customContent.copy(
+                    selectedPatatoes = meal
+                )
+            }
+
+            VEGETABLES -> {
+                customContent.copy(
+                    selectedVegetables = meal
+                )
+            }
+
+            MEAT -> {
+                customContent.copy(
+                    selectedMeat = meal
+                )
+            }
+
+            DISH -> {
+
+                customContent.copy(
+                    selectedMeat = meal
+                )
+            }
+
+            OTHER -> {
+                customContent.copy(
+                    selectedMeat = meal
+                )
+
+            }
+
+            SAUCE -> {
+                customContent.copy(
+                    selectedMeat = meal
+                )
+            }
+        }
+    }
+
+
+    private fun resetCustomContentFromMeal(meal: Meal): ReplaceMenuFormat {
+        val succeededContent = state.content as ReplaceMenuResult.Succeed
+        var customContent = succeededContent.replaceMenuFormat as ReplaceMenuFormat.Custom
+
+        return when (meal.mealKind) {
+            PASTA_PATATO -> {
+                customContent.copy(
+                    selectedPatatoes = null,
+                )
+            }
+
+            VEGETABLES -> {
+                customContent.copy(
+                    selectedVegetables = null,
+                )
+            }
+
+            MEAT -> {
+                customContent.copy(
+                    selectedMeat = null
+                )
+            }
+
+            DISH -> {
+
+                customContent.copy(
+                    selectedMeat = null
+                )
+            }
+
+            OTHER -> {
+                customContent.copy(
+                    selectedMeat = null
+                )
+
+            }
+
+            SAUCE -> {
+                customContent.copy(
+                    selectedMeat = null
+                )
             }
         }
     }

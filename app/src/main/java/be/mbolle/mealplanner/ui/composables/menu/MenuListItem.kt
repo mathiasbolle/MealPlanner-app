@@ -41,6 +41,7 @@ fun MenuListItem(
     modifier: Modifier = Modifier,
     menu: Menu?,
     highlightToday: Boolean = true,
+    hasSelectedMeal: Boolean = false,
     onMealAction: ((meal: Menu) -> Unit)? = null,
 ) {
 
