@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -127,7 +128,7 @@ fun MealPlannerNavHost(
 
                 val menuViewModel: MenuViewModel =
                     it.sharedViewModel(navController, MenuViewModel.Companion.Factory)
-                val state = menuViewModel.menuState
+                val state = menuViewModel.menuState.collectAsState()
 
 //                val args = it.toRoute<Destination.Meals.SwitchMenu>()
 //                val menu: Int? = it.savedStateHandle.get<Int>("menu")
@@ -144,13 +145,15 @@ fun MealPlannerNavHost(
                         modifier = modifier
                             .fillMaxWidth()
                     )
-                    when (state.mealDetails) {
+                    when (state.value.mealDetails) {
                         is MenuStatus.Succeed -> {
                             MenuItemSwitch(
                                 modifier = Modifier
                                     .padding(innerPadding)
                                     .padding(20.dp),
-                                menuList = state.mealDetails.list
+                                menuList = (state.value.mealDetails as MenuStatus.Succeed).list.collectAsState(
+                                    initial = emptyList()
+                                ).value
                             ) {
                                 navController.popBackStack()
                             }
@@ -200,6 +203,7 @@ fun MealPlannerNavHost(
                             when (replaceMenuCategory) {
                                 ReplaceMenuCategory.CUSTOM -> navController
                                     .navigate(Destination.Meals.ReplaceMenu.CustomReplaceMenu)
+
                                 ReplaceMenuCategory.PREDEFINED -> navController
                                     .navigate(Destination.Meals.ReplaceMenu.PredefinedReplaceMenu)
                             }

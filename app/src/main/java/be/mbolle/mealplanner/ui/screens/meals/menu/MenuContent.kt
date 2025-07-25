@@ -11,6 +11,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,12 +42,11 @@ fun MenuContent(
     onReplaceMenuClick: (menu: Menu) -> Unit,
     onSwitchMenuClick: (menu: Menu) -> Unit,
 ) {
-    val state = viewModel.menuState
+    val state = viewModel.menuState.collectAsState().value
 
     val thisWeek = stringResource(R.string.this_week_btn)
     val nextWeek = stringResource(R.string.next_week_btn)
     val nextMonth = stringResource(R.string.next_month_btn)
-
 
     Column {
         Column(modifier = modifier) {
@@ -85,9 +85,10 @@ fun MenuContent(
                             textAlign = TextAlign.Left,
                             fontWeight = FontWeight.Light
                         )
+                        Log.d("MenuContent", details.list.toString())
 
                         MenuList(
-                            mealsState = details.list,
+                            mealsState = details.list.collectAsState(initial = emptyList()).value,
                             scrollIndex = details.scrollIndex,
                             onMealAction = { menu ->
                                 isModalVisible = true

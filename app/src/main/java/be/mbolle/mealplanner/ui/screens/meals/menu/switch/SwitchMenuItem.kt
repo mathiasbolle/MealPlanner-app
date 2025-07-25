@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,16 +29,16 @@ import be.mbolle.mealplanner.model.Menu
 import be.mbolle.mealplanner.ui.composables.MealPlannerButton
 import be.mbolle.mealplanner.ui.composables.menu.MenuList
 import be.mbolle.mealplanner.ui.composables.menu.MenuListItem
+import kotlinx.coroutines.launch
 
 @Composable
 fun MenuItemSwitch(
     modifier: Modifier = Modifier,
-    menuList: Collection<List<Menu>>,
+    menuList: List<Menu>,
     navigateBack: () -> Unit,
 ) {
     val switchMenuViewModel: SwitchMenuViewModel = viewModel(factory = SwitchMenuViewModel.Factory)
     val state = switchMenuViewModel.switchMenuState.value
-
 
     Column(modifier = modifier) {
         //replace composable
@@ -68,9 +69,15 @@ fun MenuItemSwitch(
                     navigateBack()
                 }
                 Spacer(modifier = Modifier.padding(7.dp))
+                val coroutineScope = rememberCoroutineScope()
+
                 MealPlannerButton(text = "Confirm") {
-                    switchMenuViewModel.confirm()
-                    navigateBack()
+                    val job = switchMenuViewModel.confirm()
+
+                    coroutineScope.launch {
+                        job.join()
+                        navigateBack()
+                    }
                 }
             }
         }

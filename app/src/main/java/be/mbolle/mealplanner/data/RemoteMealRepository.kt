@@ -16,6 +16,8 @@ import be.mbolle.mealplanner.model.MealRepository
 import be.mbolle.mealplanner.model.Menu
 import be.mbolle.mealplanner.model.toMealModelFromDb
 import be.mbolle.mealplanner.model.toMenuModelFromDb
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 
 class RemoteMealRepository(
     private val menuService: MenuService,
@@ -25,15 +27,16 @@ class RemoteMealRepository(
 ) : MealRepository {
     private val menuMealMenuDao = mealPlannerDatabase.getMenuWithMealMenuDao()
 
-    override suspend fun getMenu(): List<Menu> {
+    override suspend fun getMenu(): Flow<List<Menu>> {
         val menuDao = mealPlannerDatabase.getMenuDao()
         val menuMealMenuDao = mealPlannerDatabase.getMenuWithMealMenuDao()
         val mealMenuDao = mealPlannerDatabase.getMealMenuDao()
 
-        val cachedMenus = menuMealMenuDao.getMenuWithMealMenus().toMenuModelFromDb()
+        val cachedMenus = menuMealMenuDao.getMenuWithMealMenus().map { menu -> menu.toMenuModelFromDb() }
 
         try {
             val menus = menuService.getMenu()
+            Log.d("RemoveMealRepository", menus.toString())
             menus.forEach { menu ->
                 val insertedMenuId = menuDao.insertMenu(MenuEntity(date = menu.date, menuId = menu.id))
 

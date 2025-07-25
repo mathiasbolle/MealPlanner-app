@@ -12,7 +12,9 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import be.mbolle.mealplanner.MainApplication
 import be.mbolle.mealplanner.model.MealRepository
 import be.mbolle.mealplanner.model.Menu
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class SwitchMenuViewModel(
     //receive this with parameter of
@@ -53,8 +55,8 @@ class SwitchMenuViewModel(
     }
 
 
-    fun confirm() {
-        viewModelScope.launch {
+    fun confirm(): Job {
+        return viewModelScope.launch {
             if (switchMenuState.value != null) {
                 val id: Int = switchMenuState.value?.toMenu?.id ?: 0
                 val menu: Menu = switchMenuState.value?.fromMenu!!
@@ -63,6 +65,7 @@ class SwitchMenuViewModel(
                     menu
                 )
             }
+            mealRepository.getMenu() // should be fixed with the flow API.
         }
     }
 

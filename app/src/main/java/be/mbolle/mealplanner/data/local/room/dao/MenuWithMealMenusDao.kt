@@ -4,12 +4,13 @@ import androidx.room.Dao
 import androidx.room.Query
 import be.mbolle.mealplanner.data.local.room.entities.MenuWithMealMenus
 import be.mbolle.mealplanner.model.Menu
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MenuWithMealMenusDao {
 
     @Query("SELECT * FROM menu")
-    suspend fun getMenuWithMealMenus(): List<MenuWithMealMenus>
+    fun getMenuWithMealMenus(): Flow<List<MenuWithMealMenus>>
 
     @Query("SELECT * FROM menu WHERE menuId = :id")
     suspend fun getMenuWithMealMenuById(id: Int): MenuWithMealMenus

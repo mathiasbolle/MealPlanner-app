@@ -5,9 +5,10 @@ import be.mbolle.mealplanner.data.dto.MealDto
 import be.mbolle.mealplanner.data.dto.MenuDto
 import be.mbolle.mealplanner.data.local.room.entities.MealMenuEntity
 import be.mbolle.mealplanner.data.local.room.entities.MenuWithMealMenus
+import kotlinx.coroutines.flow.Flow
 
 interface MealRepository {
-    suspend fun getMenu(): List<Menu>
+    suspend fun getMenu(): Flow<List<Menu>>
     suspend fun getMenuById(id: Int): Menu
     suspend fun refreshFoodItems(): List<Meal>
     suspend fun getLocalFoodItems(): List<Meal>

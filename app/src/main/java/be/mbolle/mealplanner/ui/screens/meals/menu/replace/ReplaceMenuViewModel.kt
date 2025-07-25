@@ -37,6 +37,7 @@ class ReplaceMenuViewModel(
     var state by mutableStateOf(ReplaceMenuState())
         private set
 
+
     init {
         initMenu()
     }
@@ -73,15 +74,15 @@ class ReplaceMenuViewModel(
 
         when (meal.mealKind) {
             PASTA_PATATO -> {
-                adjustMenuWithMeal(replaceMenuResult.selectedPatatoes!!)
+                addMenuWithMeal(replaceMenuResult.selectedPatatoes!!)
             }
 
             VEGETABLES -> {
-                adjustMenuWithMeal(replaceMenuResult.selectedVegetables!!)
+                addMenuWithMeal(replaceMenuResult.selectedVegetables!!)
             }
 
             MEAT -> {
-                adjustMenuWithMeal(replaceMenuResult.selectedMeat!!)
+                addMenuWithMeal(replaceMenuResult.selectedMeat!!)
             }
 
             else -> {
@@ -103,36 +104,58 @@ class ReplaceMenuViewModel(
                 replaceMenuFormat = customData
             )
         )
-
     }
 
-    private fun adjustMenuWithMeal(meal: Meal) {
-        val meal =
-            (if (state.menu?.meal == "") meal.name else
-                state.menu?.meal.toString() + ", " + meal.name).toString()
+    private fun List<Meal>.containsMealKind(meal: Meal): Boolean {
+        return this.map { meals -> meals.mealKind }.contains(meal.mealKind)
+    }
+
+    private fun MutableList<Meal>.addMeal(meal: Meal) {
+        if (!this.containsMealKind(meal)) {
+            this.add(meal)
+        }
+    }
+
+    private fun MutableList<Meal>.removeMeal(meal: Meal) {
+        if (this.containsMealKind(meal))
+            this.remove(meal)
+    }
+
+
+    private fun adjustMealToMenu(meal: Meal, operation: MutableList<Meal>.(meal: Meal) -> Unit) {
+
+        val succeededContent = state.content as ReplaceMenuResult.Succeed
+        var replaceMenuResult = succeededContent.replaceMenuFormat as ReplaceMenuFormat.Custom
+
+        val meals = listOfNotNull(
+            replaceMenuResult.selectedMeat,
+            replaceMenuResult.selectedVegetables,
+            replaceMenuResult.selectedPatatoes
+        ).toMutableList()
+        meals.operation(meal)
+
+        val mealString = meals.map { meal -> meal.name }
+            .joinToString { meal -> meal } // refactor to generic method
 
         state = state.copy(
             menu = state.menu!!.copy(
                 id = state.menu?.id ?: -1,
-                meal = meal,
+                meal = mealString,
                 date = state.menu!!.date
             )
         )
     }
 
-    private fun removeMenuWithMeal(meal: Meal) {
-        val mealState = state.menu?.meal
-        var newMealState: String? = ""
-        if (mealState?.contains(meal.name) == true) {
-            newMealState = mealState.replace(meal.name, "")
-        } else if (mealState?.contains("${meal.name},") == true) {
-            newMealState = mealState.replace("${meal.name},", "")
+    private fun addMenuWithMeal(meal: Meal) {
+        adjustMealToMenu(meal) { meal ->
+            addMeal(meal)
         }
-        state = state.copy(
-            menu = state.menu!!.copy(
-                meal = newMealState!!
-            )
-        )
+    }
+
+    private fun removeMenuWithMeal(meal: Meal) {
+        adjustMealToMenu(meal) { meal ->
+            removeMeal(meal)
+        }
     }
 
     private fun getCustomContentWithMeal(meal: Meal): ReplaceMenuFormat {

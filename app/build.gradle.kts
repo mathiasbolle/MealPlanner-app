@@ -1,4 +1,3 @@
-import com.android.build.api.variant.BuildConfigField
 import org.jetbrains.kotlin.konan.properties.Properties
 
 plugins {
@@ -33,7 +32,7 @@ android {
         buildConfigField(
             type = "String",
             name = "BUILD_SERVICE",
-            value = "\"http://192.168.0.206:8000/\""
+            value = "\"http://192.168.0.101:8000/\""
         )
     }
 

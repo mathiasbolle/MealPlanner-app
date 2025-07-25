@@ -1,6 +1,7 @@
 package be.mbolle.mealplanner.ui.screens.meals.menu
 
 import be.mbolle.mealplanner.model.Menu
+import kotlinx.coroutines.flow.Flow
 
 data class MenuState(
     val mealDetails: MenuStatus = MenuStatus.Loading,
@@ -10,7 +11,7 @@ data class MenuState(
 
 sealed interface MenuStatus {
     data class Succeed(
-        val list: Collection<List<Menu>>,
+        val list: Flow<List<Menu>>,
         val scrollIndex: Int = 0,
         val selectedMenu: Menu? = null
     ) : MenuStatus

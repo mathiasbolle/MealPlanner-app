@@ -122,7 +122,7 @@ fun MenuListItem(
 @Composable
 fun MenuList(
     modifier: Modifier = Modifier,
-    mealsState: Collection<List<Menu>>,
+    mealsState: List<Menu>,
     scrollIndex: Int = 0,
     onMealAction: ((meal: Menu) -> Unit)? = null,
     onMenuAction: ((meal: Menu) -> Unit)? = null,
@@ -141,38 +141,36 @@ fun MenuList(
             }
 
             LazyColumn(verticalArrangement = Arrangement.spacedBy(10.dp), state = lazyListState) {
-                mealsState.forEach { mealsPerWeek ->
-                    Log.d("MealPlannerApp", mealsPerWeek.toString())
-                    items(mealsPerWeek) { meal ->
-                        if (meal.date.isToday()) {
-                            MenuListItem(
-                                menu = meal,
-                                onMealAction = onMealAction,
-                                modifier = modifier
-                                    .clickable(enabled = onMenuAction != null) {
-                                        onMenuAction?.invoke(
-                                            meal
-                                        )
-                                    }
-                                    .padding(vertical = 10.dp),
-                            )
-                        } else {
-                            MenuListItem(
-                                menu = meal,
-                                onMealAction = onMealAction,
-                                modifier = modifier
-                                    .clickable(enabled = onMenuAction != null) {
-                                        onMenuAction?.invoke(
-                                            meal
-                                        )
-                                    }
-                                    .padding(vertical = 10.dp),
-                            )
+                Log.d("MealPlannerApp", mealsState.toString())
+                items(mealsState) { meal ->
+                    if (meal.date.isToday()) {
+                        MenuListItem(
+                            menu = meal,
+                            onMealAction = onMealAction,
+                            modifier = modifier
+                                .clickable(enabled = onMenuAction != null) {
+                                    onMenuAction?.invoke(
+                                        meal
+                                    )
+                                }
+                                .padding(vertical = 10.dp),
+                        )
+                    } else {
+                        MenuListItem(
+                            menu = meal,
+                            onMealAction = onMealAction,
+                            modifier = modifier
+                                .clickable(enabled = onMenuAction != null) {
+                                    onMenuAction?.invoke(
+                                        meal
+                                    )
+                                }
+                                .padding(vertical = 10.dp),
+                        )
 
-                            if (meal == mealsPerWeek.last()) {
-                                // if this is the last meal of the week.
-                                Spacer(modifier = Modifier.padding(vertical = 50.dp))
-                            }
+                        if (meal == mealsState.last()) {
+                            // if this is the last meal of the week.
+                            Spacer(modifier = Modifier.padding(vertical = 50.dp))
                         }
                     }
                 }
